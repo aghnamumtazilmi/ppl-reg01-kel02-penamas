@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBI-005 | Ubah Data Penerima & Status - PENAMAS</title>
+    <title>Ubah Data Penerima & Status - PENAMAS</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -11,19 +11,13 @@
 
     <div class="max-w-3xl mx-auto px-4">
         
-        <!-- Header Proyek (Konsisten Hijau Emerald seperti PBI-004) -->
+        <!-- Header Proyek -->
         <div class="bg-emerald-700 text-white rounded-t-2xl p-6 shadow-md">
             <div class="flex items-center justify-between">
                 <div>
-                    <span class="bg-emerald-800 text-emerald-200 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                        Feature F-02 • PBI-005
-                    </span>
-                    <h1 class="text-2xl font-bold mt-2">Ubah Data Alamat & Status Penerima</h1>
+                    <h1 class="text-2xl font-bold">Ubah Data Alamat & Status Penerima</h1>
                     <p class="text-emerald-100 text-sm mt-1">PENAMAS — Sistem Informasi Pengelolaan Bantuan Pangan Masyarakat</p>
                 </div>
-                <a href="{{ route('penerima.index') }}" class="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 rounded-lg text-sm font-medium transition">
-                    &larr; Kembali ke Daftar
-                </a>
             </div>
         </div>
 
@@ -88,8 +82,14 @@
                         <label for="kecamatan" class="block text-sm font-semibold text-slate-700 mb-1">
                             Kecamatan <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" name="kecamatan" id="kecamatan" value="{{ old('kecamatan', $penerima->kecamatan) }}"
+                        <select name="kecamatan" id="kecamatan"
                             class="w-full px-4 py-2.5 rounded-lg border @error('kecamatan') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                            @foreach ($daftarKecamatan as $kec)
+                                <option value="{{ $kec }}" {{ old('kecamatan', $penerima->kecamatan) == $kec ? 'selected' : '' }}>
+                                    Kecamatan {{ $kec }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
@@ -112,29 +112,26 @@
                     </div>
                 </div>
 
-                <!-- [PBI-005] Kriteria 1 & 2: Ubah Status Penerima (Aktif / Nonaktif) -->
-                <div class="mb-8 p-4 bg-emerald-50/50 rounded-xl border border-emerald-200">
-                    <label for="status" class="block text-sm font-semibold text-slate-800 mb-1">
-                        Status Kelayakan Penerima Bantuan <span class="text-rose-500">*</span>
+                <!-- Status Penerima (Aktif / Nonaktif) -->
+                <div class="mb-8">
+                    <label for="status" class="block text-sm font-semibold text-slate-700 mb-1">
+                        Status Penerima <span class="text-rose-500">*</span>
                     </label>
                     <select name="status" id="status"
                         class="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
                         <option value="aktif" {{ old('status', $penerima->status) === 'aktif' ? 'selected' : '' }}>
-                            🟢 Aktif (Layak menerima alokasi bantuan pangan)
+                            Aktif
                         </option>
                         <option value="nonaktif" {{ old('status', $penerima->status) === 'nonaktif' ? 'selected' : '' }}>
-                            🔴 Nonaktif (Tidak akan muncul saat pembuatan rencana distribusi bantuan)
+                            Nonaktif
                         </option>
                     </select>
-                    <p class="text-xs text-slate-500 mt-2">
-                        * Catatan PBI-005: Warga berstatus <strong>Nonaktif</strong> secara otomatis disaring keluar dari rencana penyaluran bantuan di modul Distribusi.
-                    </p>
                 </div>
 
                 <!-- Tombol Aksi -->
-                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
-                    <a href="{{ route('penerima.index') }}" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 transition">
-                        Batal
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <a href="{{ route('penerima.index') }}" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 transition flex items-center space-x-1">
+                        <span>&larr; Kembali ke Daftar</span>
                     </a>
                     <button type="submit" class="px-6 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm transition">
                         Simpan Perubahan Data & Status
