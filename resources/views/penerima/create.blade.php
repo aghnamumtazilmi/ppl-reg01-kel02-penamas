@@ -21,6 +21,9 @@
                     <h1 class="text-2xl font-bold mt-2">Pendaftaran Penerima Bantuan (KPM) Baru</h1>
                     <p class="text-emerald-100 text-sm mt-1">PENAMAS — Sistem Informasi Pengelolaan Bantuan Pangan Masyarakat</p>
                 </div>
+                <a href="{{ route('penerima.index') }}" class="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 rounded-lg text-sm font-medium transition">
+                    &larr; Lihat Daftar Penerima
+                </a>
             </div>
         </div>
 

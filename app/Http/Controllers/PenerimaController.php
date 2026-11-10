@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 class PenerimaController extends Controller
 {
     /**
-     * Menampilkan daftar penerima bantuan (opsional, untuk melihat hasil data)
+     * Halaman Tabel Daftar Penerima
+     * Menampilkan daftar warga penerima bantuan dengan status dan tombol aksi Edit.
      */
     public function index()
     {
@@ -16,8 +17,14 @@ class PenerimaController extends Controller
         return view('penerima.index', compact('penerima'));
     }
 
+    // =========================================================================
+    // [PBI-004] FITUR PENDAFTARAN PENERIMA BANTUAN BARU
+    // Kriteria: Admin mengisi NIK 16 digit, nama, alamat, kelurahan, kecamatan.
+    // Sistem menolak jika format NIK salah atau NIK sudah pernah terdaftar.
+    // =========================================================================
+
     /**
-     * Menampilkan Form Pendaftaran Penerima Bantuan Baru (PBI-004)
+     * [PBI-004] Menampilkan Form Pendaftaran Penerima Baru
      */
     public function create()
     {
@@ -25,17 +32,16 @@ class PenerimaController extends Controller
     }
 
     /**
-     * Memproses Penyimpanan Data & Validasi NIK 16 Digit (PBI-004)
+     * [PBI-004] Memproses Penyimpanan Data & Validasi NIK 16 Digit Unik
      */
     public function store(Request $request)
     {
-        // 1. Validasi Sesuai Acceptance Criteria PBI-004
         $validated = $request->validate([
             'nik' => [
                 'required',
                 'numeric',
-                'digits:16',            // Menolak jika bukan 16 digit
-                'unique:penerima,nik',  // Menolak jika NIK sudah pernah terdaftar
+                'digits:16',            // AC 2: Validasi NIK wajib tepat 16 digit
+                'unique:penerima,nik',  // AC 2: Validasi NIK belum pernah terdaftar
             ],
             'nama'      => 'required|string|max:255',
             'alamat'    => 'required|string',
@@ -44,7 +50,6 @@ class PenerimaController extends Controller
             'kabupaten' => 'nullable|string|max:100',
             'no_hp'     => 'nullable|string|max:20',
         ], [
-            // Pesan Error Bahasa Indonesia yang Ramah
             'nik.required' => 'NIK wajib diisi.',
             'nik.numeric'  => 'NIK harus berupa angka.',
             'nik.digits'   => 'Format NIK salah! NIK harus tepat 16 digit angka.',
@@ -55,14 +60,59 @@ class PenerimaController extends Controller
             'kecamatan.required' => 'Kecamatan wajib diisi.',
         ]);
 
-        // 2. Set default sesuai SKEMA_DATABASE_PENAMAS
         $validated['kabupaten'] = $validated['kabupaten'] ?? 'Banyumas';
-        $validated['status']    = 'aktif'; // Sesuai kriteria status default aktif
+        $validated['status']    = 'aktif'; // Default pendaftaran awal adalah aktif
 
-        // 3. Simpan ke database
         Penerima::create($validated);
 
-        // 4. Kembali ke form dengan notifikasi sukses
-        return redirect()->route('penerima.create')->with('success', 'Data Keluarga Penerima Manfaat (KPM) baru berhasil didaftarkan!');
+        return redirect()->route('penerima.index')->with('success', 'Data Keluarga Penerima Manfaat (KPM) baru berhasil didaftarkan!');
+    }
+
+    // =========================================================================
+    // [PBI-005] FITUR MENGUBAH DATA ALAMAT ATAU STATUS PENERIMA
+    // Kriteria:
+    // 1. Admin dapat mengedit data warga atau mengubah statusnya (aktif/nonaktif).
+    // 2. Penerima nonaktif tidak muncul saat pembuatan rencana bantuan.
+    // =========================================================================
+
+    /**
+     * [PBI-005] Menampilkan Form Edit untuk Mengubah Alamat & Status Penerima
+     */
+    public function edit($id)
+    {
+        // Cari data penerima berdasarkan ID, jika tidak ada tampilkan 404
+        $penerima = Penerima::findOrFail($id);
+
+        return view('penerima.edit', compact('penerima'));
+    }
+
+    /**
+     * [PBI-005] Memproses Pembaruan Data Alamat & Perubahan Status (Aktif/Nonaktif)
+     */
+    public function update(Request $request, $id)
+    {
+        $penerima = Penerima::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama'      => 'required|string|max:255',
+            'alamat'    => 'required|string',
+            'kelurahan' => 'required|string|max:100',
+            'kecamatan' => 'required|string|max:100',
+            'kabupaten' => 'nullable|string|max:100',
+            'no_hp'     => 'nullable|string|max:20',
+            'status'    => 'required|in:aktif,nonaktif', // Kriteria Utama PBI-005: Aktif / Nonaktif
+        ], [
+            'status.required' => 'Status penerima wajib ditentukan.',
+            'status.in'       => 'Pilihan status hanya boleh "aktif" atau "nonaktif".',
+            'nama.required'   => 'Nama penerima wajib diisi.',
+            'alamat.required' => 'Alamat lengkap wajib diisi.',
+            'kelurahan.required' => 'Kelurahan/Desa wajib diisi.',
+            'kecamatan.required' => 'Kecamatan wajib diisi.',
+        ]);
+
+        // Eksekusi update perubahan alamat dan status ke tabel penerima
+        $penerima->update($validated);
+
+        return redirect()->route('penerima.index')->with('success', 'Data alamat dan status penerima berhasil diperbarui!');
     }
 }
