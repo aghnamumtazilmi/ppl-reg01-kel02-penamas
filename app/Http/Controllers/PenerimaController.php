@@ -8,13 +8,57 @@ use Illuminate\Http\Request;
 class PenerimaController extends Controller
 {
     /**
-     * Halaman Tabel Daftar Penerima
-     * Menampilkan daftar warga penerima bantuan dengan status dan tombol aksi Edit.
+     * Daftar 27 Kecamatan Resmi di Wilayah Kabupaten Banyumas
      */
-    public function index()
+    private $kecamatanBanyumas = [
+        'Ajibarang', 'Banyumas', 'Baturraden', 'Cilongok', 'Gumelar',
+        'Jatilawang', 'Kalibagor', 'Karanglewas', 'Kebasen', 'Kedungbanteng',
+        'Kembaran', 'Kemranjen', 'Lumbir', 'Patikraja', 'Pekuncen',
+        'Purwojati', 'Purwokerto Barat', 'Purwokerto Selatan', 'Purwokerto Timur',
+        'Purwokerto Utara', 'Rawalo', 'Sokaraja', 'Somagede', 'Sumbang',
+        'Sumpiuh', 'Tambak', 'Wangon'
+    ];
+
+    // =========================================================================
+    // [PBI-006] FITUR PENCARIAN & FILTER DATA PENERIMA
+    // Kriteria:
+    // 1. Kotak pencarian menampilkan hasil sesuai kata kunci NIK atau nama.
+    // 2. Pilihan filter kecamatan hanya menampilkan warga di wilayah tersebut.
+    // =========================================================================
+
+    /**
+     * [PBI-006] Halaman Tabel Daftar Penerima dengan Fitur Cari & Filter Kecamatan
+     */
+    public function index(Request $request)
     {
-        $penerima = Penerima::latest()->paginate(10);
-        return view('penerima.index', compact('penerima'));
+        $query = Penerima::query();
+
+        // [PBI-006] Kriteria 1: Pencarian berdasarkan kata kunci NIK atau Nama
+        if ($request->filled('search')) {
+            $keyword = trim($request->search);
+            $query->where(function($q) use ($keyword) {
+                $q->where('nik', 'like', "%{$keyword}%")
+                  ->orWhere('nama', 'like', "%{$keyword}%");
+            });
+        }
+
+        // [PBI-006] Kriteria 2: Filter dropdown hanya menampilkan warga di kecamatan tersebut
+        if ($request->filled('kecamatan')) {
+            $query->where('kecamatan', $request->kecamatan);
+        }
+
+        // Fitur pendukung: Filter berdasarkan status (Aktif / Nonaktif)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Ambil data dengan pagination dan pertahankan parameter query URL
+        $penerima = $query->latest()->paginate(10)->withQueryString();
+
+        // Sediakan daftar 27 kecamatan Kabupaten Banyumas untuk dropdown filter
+        $daftarKecamatan = $this->kecamatanBanyumas;
+
+        return view('penerima.index', compact('penerima', 'daftarKecamatan'));
     }
 
     // =========================================================================
@@ -28,7 +72,8 @@ class PenerimaController extends Controller
      */
     public function create()
     {
-        return view('penerima.create');
+        $daftarKecamatan = $this->kecamatanBanyumas;
+        return view('penerima.create', compact('daftarKecamatan'));
     }
 
     /**
@@ -80,10 +125,9 @@ class PenerimaController extends Controller
      */
     public function edit($id)
     {
-        // Cari data penerima berdasarkan ID, jika tidak ada tampilkan 404
         $penerima = Penerima::findOrFail($id);
-
-        return view('penerima.edit', compact('penerima'));
+        $daftarKecamatan = $this->kecamatanBanyumas;
+        return view('penerima.edit', compact('penerima', 'daftarKecamatan'));
     }
 
     /**
@@ -110,7 +154,6 @@ class PenerimaController extends Controller
             'kecamatan.required' => 'Kecamatan wajib diisi.',
         ]);
 
-        // Eksekusi update perubahan alamat dan status ke tabel penerima
         $penerima->update($validated);
 
         return redirect()->route('penerima.index')->with('success', 'Data alamat dan status penerima berhasil diperbarui!');

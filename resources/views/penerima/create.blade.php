@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBI-004 | Pendaftaran Penerima Bantuan - PENAMAS</title>
+    <title>Pendaftaran Penerima Bantuan - PENAMAS</title>
     <!-- Tailwind CSS CDN agar tampilan langsung rapi dan profesional -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -15,15 +15,9 @@
         <div class="bg-emerald-700 text-white rounded-t-2xl p-6 shadow-md">
             <div class="flex items-center justify-between">
                 <div>
-                    <span class="bg-emerald-800 text-emerald-200 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                        Feature F-02 • PBI-004
-                    </span>
-                    <h1 class="text-2xl font-bold mt-2">Pendaftaran Penerima Bantuan (KPM) Baru</h1>
+                    <h1 class="text-2xl font-bold">Pendaftaran Penerima Bantuan (KPM) Baru</h1>
                     <p class="text-emerald-100 text-sm mt-1">PENAMAS — Sistem Informasi Pengelolaan Bantuan Pangan Masyarakat</p>
                 </div>
-                <a href="{{ route('penerima.index') }}" class="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 rounded-lg text-sm font-medium transition">
-                    &larr; Lihat Daftar Penerima
-                </a>
             </div>
         </div>
 
@@ -103,37 +97,32 @@
                         <label for="kecamatan" class="block text-sm font-semibold text-slate-700 mb-1">
                             Kecamatan <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" name="kecamatan" id="kecamatan" value="{{ old('kecamatan') }}"
-                            placeholder="Contoh: Purwokerto Selatan"
+                        <select name="kecamatan" id="kecamatan"
                             class="w-full px-4 py-2.5 rounded-lg border @error('kecamatan') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                            <option value="">-- Pilih Kecamatan --</option>
+                            @foreach ($daftarKecamatan as $kec)
+                                <option value="{{ $kec }}" {{ old('kecamatan') == $kec ? 'selected' : '' }}>
+                                    Kecamatan {{ $kec }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
-                <!-- Kabupaten & No HP Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                    <div>
-                        <label for="kabupaten" class="block text-sm font-semibold text-slate-700 mb-1">
-                            Kabupaten
-                        </label>
-                        <input type="text" name="kabupaten" id="kabupaten" value="Banyumas" readonly
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed">
-                    </div>
-
-                    <div>
-                        <label for="no_hp" class="block text-sm font-semibold text-slate-700 mb-1">
-                            Nomor WhatsApp / HP (Opsional)
-                        </label>
-                        <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp') }}"
-                            placeholder="Contoh: 08123456789"
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                    </div>
+                <!-- Kabupaten -->
+                <div class="mb-8">
+                    <label for="kabupaten" class="block text-sm font-semibold text-slate-700 mb-1">
+                        Kabupaten
+                    </label>
+                    <input type="text" name="kabupaten" id="kabupaten" value="Banyumas" readonly
+                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed">
                 </div>
 
-                <!-- Tombol Submit -->
-                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
-                    <button type="reset" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 transition">
-                        Reset Form
-                    </button>
+                <!-- Tombol Aksi -->
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <a href="{{ route('penerima.index') }}" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 transition flex items-center space-x-1">
+                        <span>&larr; Kembali ke Daftar</span>
+                    </a>
                     <button type="submit" class="px-6 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm transition flex items-center space-x-2">
                         <span>Simpan Data Penerima</span>
                     </button>
