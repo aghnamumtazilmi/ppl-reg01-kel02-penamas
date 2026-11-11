@@ -2,18 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 
+/**
+ * Class UserController
+ *
+ * Menangani logika Backend API untuk Fitur F-01: Kelola Akun Pengguna (Sprint 1)
+ * PIC: Riyan Saefuloh
+ */
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
      * Menampilkan daftar semua pengguna dengan fitur pencarian dan filter peran.
+     *
+     * Endpoint: GET /api/users
+     * Query params:
+     * - search: pencarian nama atau email
+     * - role: filter role ('pimpinan', 'admin', 'petugas')
+     * - per_page: jumlah item per halaman (default 10)
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $query = User::query();
 
@@ -31,104 +44,65 @@ class UserController extends Controller
             $query->where('role', $request->input('role'));
         }
 
-        $users = $query->latest()->paginate(10)->withQueryString();
+        $perPage = (int) $request->input('per_page', 10);
+        $users = $query->latest()->paginate($perPage);
 
-        return view('users.index', compact('users'));
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar pengguna berhasil dimuat.',
+            'data' => $users,
+        ], 200);
     }
 
     /**
-     * Show the form for creating a new resource.
-     * PBI-001: Form untuk registrasi/tambah akun baru beserta pilihan role.
+     * PBI-001: Register & Role (Pendaftaran Akun Baru)
+     * Mendaftarkan akun pengguna baru beserta peran/hak akses yang ditentukan.
+     *
+     * Endpoint: POST /api/users
+     * Payload: name, email, password, password_confirmation, role
      */
-    public function create()
+    public function store(StoreUserRequest $request): JsonResponse
     {
-        $roles = [
-            'petugas' => 'Petugas Lapangan',
-            'admin' => 'Administrator',
-            'pimpinan' => 'Pimpinan',
-        ];
+        $validated = $request->validated();
 
-        return view('users.create', compact('roles'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * PBI-001: Simpan akun baru ke database.
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'string', 'in:pimpinan,admin,petugas'],
-        ], [
-            'name.required' => 'Nama pengguna wajib diisi.',
-            'email.required' => 'Alamat email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email ini sudah terdaftar di sistem.',
-            'password.required' => 'Kata sandi wajib diisi.',
-            'password.min' => 'Kata sandi minimal terdiri dari 8 karakter.',
-            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
-            'role.required' => 'Pilihan peran (role) wajib ditentukan.',
-            'role.in' => 'Peran yang dipilih tidak valid.',
-        ]);
-
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
         ]);
 
-        return redirect()->route('users.index')
-            ->with('success', "Akun pengguna {$validated['name']} berhasil ditambahkan.");
+        return response()->json([
+            'success' => true,
+            'message' => "Pengguna baru {$user->name} dengan peran '{$user->role}' berhasil didaftarkan.",
+            'data' => $user,
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan data detail satu akun pengguna.
+     *
+     * Endpoint: GET /api/users/{id}
      */
-    public function show(User $user)
+    public function show(User $user): JsonResponse
     {
-        return redirect()->route('users.edit', $user);
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail data pengguna berhasil dimuat.',
+            'data' => $user,
+        ], 200);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     * PBI-002: Form ubah data profil dan hak akses (role).
+     * PBI-002: Ubah Data & Hak Akses (Edit Profil & Peran)
+     * Memperbarui profil pengguna dan hak akses/peran (role).
+     *
+     * Endpoint: PUT/PATCH /api/users/{id}
+     * Payload: name, email, role, password (opsional), password_confirmation (opsional)
      */
-    public function edit(User $user)
+    public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
-        $roles = [
-            'petugas' => 'Petugas Lapangan',
-            'admin' => 'Administrator',
-            'pimpinan' => 'Pimpinan',
-        ];
-
-        return view('users.edit', compact('user', 'roles'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * PBI-002: Simpan perubahan data profil dan perbarui hak akses pengguna.
-     */
-    public function update(Request $request, User $user)
-    {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'string', 'in:pimpinan,admin,petugas'],
-        ], [
-            'name.required' => 'Nama pengguna wajib diisi.',
-            'email.required' => 'Alamat email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email ini sudah digunakan oleh pengguna lain.',
-            'password.min' => 'Kata sandi minimal terdiri dari 8 karakter.',
-            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
-            'role.required' => 'Peran (role) wajib ditentukan.',
-            'role.in' => 'Peran yang dipilih tidak valid.',
-        ]);
+        $validated = $request->validated();
 
         $data = [
             'name' => $validated['name'],
@@ -136,33 +110,42 @@ class UserController extends Controller
             'role' => $validated['role'],
         ];
 
-        // Jika password diisi, ubah password pengguna
+        // Jika password diisi, hash kata sandi baru
         if (!empty($validated['password'])) {
             $data['password'] = Hash::make($validated['password']);
         }
 
         $user->update($data);
 
-        return redirect()->route('users.index')
-            ->with('success', "Data pengguna {$user->name} berhasil diperbarui.");
+        return response()->json([
+            'success' => true,
+            'message' => "Data dan hak akses pengguna {$user->name} berhasil diperbarui.",
+            'data' => $user->fresh(),
+        ], 200);
     }
 
     /**
-     * Remove the specified resource from storage.
-     * PBI-003: Hapus akun pengguna dari sistem.
+     * PBI-003: Hapus Akun Pengguna
+     * Menghapus akun pengguna dari sistem.
+     *
+     * Endpoint: DELETE /api/users/{id}
      */
-    public function destroy(User $user)
+    public function destroy(User $user): JsonResponse
     {
-        // Proteksi jika user yang login mencoba menghapus akunnya sendiri
+        // Proteksi: cegah pengguna menghapus akunnya sendiri yang sedang aktif login
         if (auth()->check() && auth()->id() === $user->id) {
-            return redirect()->route('users.index')
-                ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif digunakan.',
+            ], 403);
         }
 
         $userName = $user->name;
         $user->delete();
 
-        return redirect()->route('users.index')
-            ->with('success', "Akun pengguna {$userName} berhasil dihapus.");
+        return response()->json([
+            'success' => true,
+            'message' => "Akun pengguna {$userName} berhasil dihapus dari sistem.",
+        ], 200);
     }
 }
