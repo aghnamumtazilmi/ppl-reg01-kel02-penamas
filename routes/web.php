@@ -12,4 +12,6 @@ Route::get('/', function () {
 Route::resource('penerima', PenerimaController::class);
 
 // Route Mutasi Stok Gudang (F-06: PBI-016, PBI-017, PBI-018)
+Route::get('stok-mutasi/keluar/create', [StokMutasiController::class, 'createKeluar'])->name('stok-mutasi.create-keluar');
+Route::post('stok-mutasi/keluar', [StokMutasiController::class, 'storeKeluar'])->name('stok-mutasi.store-keluar');
 Route::resource('stok-mutasi', StokMutasiController::class);
