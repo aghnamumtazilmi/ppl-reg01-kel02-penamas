@@ -61,12 +61,30 @@
                 @endif
             </div>
 
-            <!-- Catatan Kriteria AC 1 -->
+            <!-- Tab Filter Status Tugas (PBI-025 & PBI-026) -->
+            <div class="flex items-center space-x-2 border-b border-slate-200 mb-5">
+                <a href="{{ route('penyaluran.index', array_merge(request()->query(), ['status' => 'disetujui'])) }}"
+                    class="pb-2.5 px-3 text-xs font-semibold border-b-2 transition flex items-center space-x-1.5 {{ $tabStatus === 'disetujui' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
+                    <span class="w-2 h-2 rounded-full {{ $tabStatus === 'disetujui' ? 'bg-emerald-600' : 'bg-slate-300' }}"></span>
+                    <span>Tugas Aktif (Disetujui)</span>
+                </a>
+                <a href="{{ route('penyaluran.index', array_merge(request()->query(), ['status' => 'disalurkan'])) }}"
+                    class="pb-2.5 px-3 text-xs font-semibold border-b-2 transition flex items-center space-x-1.5 {{ $tabStatus === 'disalurkan' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
+                    <span class="w-2 h-2 rounded-full {{ $tabStatus === 'disalurkan' ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                    <span>Riwayat Telah Disalurkan</span>
+                </a>
+            </div>
+
+            <!-- Catatan Kriteria -->
             <div class="mb-4 text-xs text-slate-500 flex items-center space-x-1">
-                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <span>Menampilkan rencana distribusi berstatus <strong>Disetujui</strong> yang menugaskan diri Anda sebagai petugas lapangan.</span>
+                @if($tabStatus === 'disetujui')
+                    <span>Menampilkan rencana distribusi berstatus <strong>Disetujui</strong> yang menugaskan diri Anda sebagai petugas lapangan.</span>
+                @else
+                    <span>Menampilkan riwayat distribusi yang telah selesai dan statusnya otomatis berubah menjadi <strong>Disalurkan</strong>.</span>
+                @endif
             </div>
 
             <!-- Tabel Daftar Tugas Pembagian Bantuan -->
@@ -106,9 +124,15 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-center">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300">
-                                        Disetujui
-                                    </span>
+                                    @if($tugas->status === 'disalurkan')
+                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                            Disalurkan
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300">
+                                            Disetujui
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     <a href="{{ route('penyaluran.show', $tugas->id) }}"

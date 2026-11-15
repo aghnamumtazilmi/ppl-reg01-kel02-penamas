@@ -14,3 +14,4 @@ Route::resource('penerima', PenerimaController::class);
 // Route Modul Penyaluran Bantuan & Bukti Serah Terima (F-09: PBI-025, PBI-026, PBI-027)
 Route::get('/penyaluran', [PenyaluranController::class, 'index'])->name('penyaluran.index');
 Route::get('/penyaluran/{distribusi}', [PenyaluranController::class, 'show'])->name('penyaluran.show');
+Route::post('/penyaluran/{distribusi}/realisasi', [PenyaluranController::class, 'storeRealisasi'])->name('penyaluran.realisasi.store');
