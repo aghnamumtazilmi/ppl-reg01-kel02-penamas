@@ -106,10 +106,19 @@ class StokMutasiController extends Controller
             'keterangan.max'           => 'Keterangan sumber barang tidak boleh melebihi 500 karakter.',
         ]);
 
-        // Tentukan ID user pencatat (Gunakan akun login, atau fallback ke akun Admin operator)
-        $userId = $request->user()?->id 
-            ?? User::where('role', 'admin')->first()?->id 
-            ?? 1;
+        // Tentukan ID user pencatat secara aman (Akun login, atau fallback akun Admin)
+        $userId = $request->user()?->id;
+        if (! $userId) {
+            $adminUser = User::where('role', 'admin')->first()
+                ?? User::first()
+                ?? User::create([
+                    'name'     => 'Helmi Arif (Operator Bansos)',
+                    'email'    => 'operator.bansos@banyumaskab.go.id',
+                    'password' => bcrypt('password123'),
+                    'role'     => 'admin',
+                ]);
+            $userId = $adminUser->id;
+        }
 
         $barang = null;
 

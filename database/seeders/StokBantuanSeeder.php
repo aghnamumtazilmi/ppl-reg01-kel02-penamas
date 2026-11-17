@@ -50,3 +50,4 @@ class StokBantuanSeeder extends Seeder
         }
     }
 }
+
