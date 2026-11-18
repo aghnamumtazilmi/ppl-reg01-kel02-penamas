@@ -123,6 +123,7 @@
                         <th class="py-3 px-4 text-right">Jumlah Sisa Stok</th>
                         <th class="py-3 px-4 text-center">Status Ketersediaan</th>
                         <th class="py-3 px-4 text-right">Pembaruan Terakhir</th>
+                        <th class="py-3 px-4 text-center w-20">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -163,10 +164,30 @@
                             <td class="py-3.5 px-4 text-right text-xs text-slate-400 font-mono">
                                 {{ $item->updated_at ? $item->updated_at->format('d/m/Y H:i') : '-' }}
                             </td>
+                            <td class="py-3.5 px-4 text-center">
+                                <form 
+                                    action="{{ route('stok.destroy', $item->id) }}" 
+                                    method="POST" 
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus komoditas {{ $item->nama_barang }} dari gudang? Tindakan ini tidak dapat dibatalkan.');"
+                                    class="inline-block"
+                                >
+                                    @csrf
+                                    @method('DELETE')
+                                    <button 
+                                        type="submit" 
+                                        class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" 
+                                        title="Hapus Komoditas"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-12 text-center text-slate-400">
+                            <td colspan="7" class="py-12 text-center text-slate-400">
                                 <div class="max-w-xs mx-auto flex flex-col items-center">
                                     <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>

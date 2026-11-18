@@ -13,3 +13,6 @@ Route::get('/stok', [StokBantuanController::class, 'index'])->name('stok.index')
 // PBI-010: Pencatatan Komoditas Pangan Baru di Gudang
 Route::get('/stok/create', [StokBantuanController::class, 'create'])->name('stok.create');
 Route::post('/stok', [StokBantuanController::class, 'store'])->name('stok.store');
+
+// PBI-012: Menghapus Item Barang Salah Input di Gudang
+Route::delete('/stok/{id}', [StokBantuanController::class, 'destroy'])->name('stok.destroy');
