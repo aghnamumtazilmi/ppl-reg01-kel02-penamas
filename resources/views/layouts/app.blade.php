@@ -30,8 +30,11 @@
                 </div>
 
                 <nav class="flex items-center space-x-1 sm:space-x-4 text-sm font-medium">
-                    <a href="{{ route('stok.create') }}" class="px-3 py-2 rounded-lg text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition">
-                        Kelola Stok
+                    <a href="{{ route('stok.index') }}" class="px-3 py-2 rounded-lg text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition">
+                        Daftar Stok
+                    </a>
+                    <a href="{{ route('stok.create') }}" class="px-3 py-2 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-slate-50 transition">
+                        + Tambah Barang
                     </a>
                     <span class="text-xs text-slate-400 px-2 py-1 bg-slate-100 rounded">Role: Admin</span>
                 </nav>
@@ -48,7 +51,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 1118 0z"></path>
                 </svg>
                 <div>
-                    <h4 class="font-semibold text-sm">Berhasil Disimpan!</h4>
+                    <h4 class="font-semibold text-sm">Berhasil!</h4>
                     <p class="text-xs mt-0.5">{{ session('success') }}</p>
                 </div>
             </div>

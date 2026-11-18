@@ -8,6 +8,39 @@ use Illuminate\Http\Request;
 class StokBantuanController extends Controller
 {
     /**
+     * PBI-011: Menampilkan daftar seluruh komoditas pangan dan sisa stok di gudang.
+     */
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+
+        // Query data komoditas pangan dengan filter pencarian jika ada
+        $query = StokBantuan::query();
+
+        if ($search) {
+            $query->where('nama_barang', 'like', '%' . $search . '%');
+        }
+
+        // Ambil data dengan pagination 10 item per halaman
+        $stokList = $query->orderBy('nama_barang', 'asc')->paginate(10)->withQueryString();
+
+        // Ringkasan statistik cepat untuk kartu KPI di bagian atas tabel
+        $totalJenisBarang = StokBantuan::count();
+        $stokTersedia     = StokBantuan::where('jumlah', '>', 10)->count();
+        $stokMenipis      = StokBantuan::whereBetween('jumlah', [1, 10])->count();
+        $stokHabis        = StokBantuan::where('jumlah', '<=', 0)->count();
+
+        return view('stok.index', compact(
+            'stokList',
+            'search',
+            'totalJenisBarang',
+            'stokTersedia',
+            'stokMenipis',
+            'stokHabis'
+        ));
+    }
+
+    /**
      * PBI-010: Menampilkan formulir pendaftaran komoditas pangan baru.
      */
     public function create()
@@ -46,6 +79,6 @@ class StokBantuanController extends Controller
 
         StokBantuan::create($validated);
 
-        return redirect()->route('stok.create')->with('success', 'Komoditas pangan baru berhasil dicatat di gudang!');
+        return redirect()->route('stok.index')->with('success', 'Komoditas pangan baru berhasil dicatat di gudang!');
     }
 }
