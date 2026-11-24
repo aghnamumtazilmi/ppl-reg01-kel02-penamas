@@ -19,7 +19,14 @@ class DashboardTest extends TestCase
      */
     public function test_dashboard_page_can_be_rendered(): void
     {
-        $response = $this->get('/');
+        $user = User::create([
+            'name' => 'Admin Test',
+            'email' => 'admintest@penamas.test',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        $response = $this->actingAs($user)->get('/dashboard');
         $response->assertStatus(200);
         $response->assertSee('Halaman Ringkasan (Dashboard)');
         $response->assertSee('Edwin Salman Hakim');
@@ -30,6 +37,13 @@ class DashboardTest extends TestCase
      */
     public function test_pbi_013_dashboard_displays_accurate_summary_metrics(): void
     {
+        $user = User::create([
+            'name' => 'Admin Test',
+            'email' => 'admintest13@penamas.test',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
         // 1. Setup sample penerima
         Penerima::create([
             'nik' => '3302010101010001',
@@ -66,7 +80,7 @@ class DashboardTest extends TestCase
             'jumlah' => 50,
         ]);
 
-        $response = $this->get('/');
+        $response = $this->actingAs($user)->get('/dashboard');
         $response->assertStatus(200);
 
         // Assert data tertera di halaman
@@ -104,7 +118,7 @@ class DashboardTest extends TestCase
             'dibuat_oleh' => $admin->id,
         ]);
 
-        $response = $this->get('/');
+        $response = $this->actingAs($admin)->get('/dashboard');
         $response->assertStatus(200);
 
         // Memastikan tertera pada kotak ringkasan & tabel review
@@ -140,7 +154,7 @@ class DashboardTest extends TestCase
             'dibuat_oleh' => $admin->id,
         ]);
 
-        $response = $this->get('/');
+        $response = $this->actingAs($admin)->get('/dashboard');
         $response->assertStatus(200);
 
         // Memastikan aktivitas terbaru tertera beserta status badge

@@ -48,7 +48,7 @@ class DashboardController extends Controller
         $distribusiDisalurkanCount = Distribusi::where('status', 'disalurkan')->count();
         $distribusiDisetujuiCount = Distribusi::where('status', 'disetujui')->count();
 
-        return view('dashboard.index', compact(
+        return view('dashboard', compact(
             'totalPenerima',
             'penerimaAktif',
             'totalPaket',
