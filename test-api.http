@@ -1,0 +1,44 @@
+### ===================================================================
+### PENGUJIAN API PENAMAS - FITUR F-01: KELOLA AKUN PENGGUNA (SPRINT 1)
+### ===================================================================
+
+### 1. Menampilkan Daftar Pengguna (GET)
+GET http://127.0.0.1:8000/api/users
+Accept: application/json
+
+###
+
+### 2. PBI-001: Registrasi Akun Baru & Role (POST)
+POST http://127.0.0.1:8000/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Arjuna Pandawa",
+  "email": "arjunapandawa088@gmail.com",
+  "password": "password123",
+  "password_confirmation": "password123",
+  "role": "petugas"
+}
+
+###
+
+### 3. PBI-002: Ubah Data & Hak Akses Pengguna (PUT)
+# Ganti angka 1 dengan ID pengguna yang ingin diubah
+PUT http://127.0.0.1:8000/api/users/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Arjuna Pandawa Koordinator",
+  "email": "arjunapandawa088@gmail.com",
+  "role": "admin"
+}
+
+###
+
+### 4. PBI-003: Hapus Akun Pengguna (DELETE)
+# Ganti angka 1 dengan ID pengguna yang ingin dihapus
+DELETE http://127.0.0.1:8000/api/users/1
+Accept: application/json
+

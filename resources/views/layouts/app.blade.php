@@ -88,6 +88,17 @@
             --tag-gray-border: #3f3f46;
         }
 
+        html {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg);
@@ -99,6 +110,7 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             transition: background .15s ease, color .15s ease;
+            overflow-x: hidden;
         }
 
         /* ── Sidebar (220px) ── */
@@ -701,6 +713,40 @@
         .p-6 { padding: 20px; }
         .text-right { text-align: right; }
         .w-full { width: 100%; }
+
+        /* ── Pagination Styling ── */
+        nav[role="navigation"] {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 12px;
+            color: var(--text-2);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        nav[role="navigation"] svg { width: 14px; height: 14px; }
+        nav[role="navigation"] a, nav[role="navigation"] span {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-1);
+            text-decoration: none;
+            font-size: 12px;
+        }
+        nav[role="navigation"] a:hover {
+            background: var(--active-bg);
+            border-color: var(--active-border);
+        }
+        nav[role="navigation"] span[aria-current="page"] {
+            background: var(--text-1);
+            color: var(--accent-fg);
+            border-color: var(--text-1);
+            font-weight: 700;
+        }
     </style>
     @stack('styles')
 </head>

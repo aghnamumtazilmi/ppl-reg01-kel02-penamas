@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - PENAMAS (Base Layout & Navigation)
+| Web Routes - PENAMAS
 |--------------------------------------------------------------------------
-| Template dasar antarmuka, autentikasi sesi, dan placeholder navigasi
-| untuk seluruh modul anggota kelompok.
+| Fitur F-01: Kelola Akun Pengguna (Sprint 1)
+| PIC: Riyan Saefuloh
 |*/
 
 // Autentikasi Pengguna (Login & Logout)
@@ -28,27 +29,36 @@ Route::middleware('auth')->group(function () {
     // 1. Dashboard
     Route::get('/dashboard', fn() => view('dashboard'))->name('penamas.dashboard');
 
-    // 2. Pengguna (Placeholder - siap diisi PIC Kelola Pengguna)
-    Route::get('/pengguna', fn() => view('pengguna.index'))->name('penamas.pengguna.index');
+    // 2. Resource route utama fitur Kelola Pengguna (PIC: Riyan Saefuloh)
+    Route::resource('users', UserController::class);
 
-    // 3. Data Penerima (Placeholder - siap diisi PIC Penerima)
+    // Alias route penamas.pengguna.* agar kompatibel dengan layout & navigasi
+    Route::get('/pengguna', [UserController::class, 'index'])->name('penamas.pengguna.index');
+    Route::get('/pengguna/create', [UserController::class, 'create'])->name('penamas.pengguna.create');
+    Route::post('/pengguna', [UserController::class, 'store'])->name('penamas.pengguna.store');
+    Route::get('/pengguna/{user}', [UserController::class, 'show'])->name('penamas.pengguna.show');
+    Route::get('/pengguna/{user}/edit', [UserController::class, 'edit'])->name('penamas.pengguna.edit');
+    Route::put('/pengguna/{user}', [UserController::class, 'update'])->name('penamas.pengguna.update');
+    Route::delete('/pengguna/{user}', [UserController::class, 'destroy'])->name('penamas.pengguna.destroy');
+
+    // 3. Data Penerima (Placeholder anggota kelompok)
     Route::get('/penerima', fn() => view('penerima.index'))->name('penamas.penerima.index');
 
-    // 4. Paket Bantuan (Placeholder - siap diisi PIC Paket Bantuan)
+    // 4. Paket Bantuan (Placeholder anggota kelompok)
     Route::get('/paket-bantuan', fn() => view('paket-bantuan.index'))->name('penamas.paket-bantuan.index');
 
-    // 5. Stok Bantuan (Placeholder - siap diisi PIC Stok Bantuan)
+    // 5. Stok Bantuan (Placeholder anggota kelompok)
     Route::get('/stok', fn() => view('stok.index'))->name('penamas.stok.index');
 
-    // 6. Riwayat Mutasi Stok (Placeholder - siap diisi PIC Riwayat Mutasi)
+    // 6. Riwayat Mutasi Stok (Placeholder anggota kelompok)
     Route::get('/stok/mutasi', fn() => view('stok.mutasi'))->name('penamas.stok.mutasi');
 
-    // 7. Rencana Distribusi (Placeholder - siap diisi PIC Rencana Distribusi)
+    // 7. Rencana Distribusi (Placeholder anggota kelompok)
     Route::get('/distribusi', fn() => view('distribusi.index'))->name('penamas.distribusi.index');
 
-    // 8. Penyaluran Bantuan (Placeholder - siap diisi PIC Penyaluran)
+    // 8. Penyaluran Bantuan (Placeholder anggota kelompok)
     Route::get('/penyaluran', fn() => view('penyaluran.index'))->name('penamas.penyaluran.index');
 
-    // 9. Laporan (Placeholder - siap diisi PIC Laporan)
+    // 9. Laporan (Placeholder anggota kelompok)
     Route::get('/laporan', fn() => view('laporan.index'))->name('penamas.laporan.index');
 });
