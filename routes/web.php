@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PenerimaController;
+use App\Http\Controllers\PaketBantuanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,8 +43,17 @@ Route::middleware('auth')->group(function () {
     Route::resource('penerima', PenerimaController::class);
     Route::get('/data-penerima', [PenerimaController::class, 'index'])->name('penamas.penerima.index');
 
-    // 4. Paket Bantuan (Placeholder anggota kelompok)
-    Route::get('/paket-bantuan', fn() => view('paket-bantuan.index'))->name('penamas.paket-bantuan.index');
+    // 4. Resource route Paket Bantuan (F-03 - PIC: Isaf Khiyar Musyaffa)
+    Route::resource('paket-bantuan', PaketBantuanController::class)->names([
+        'index' => 'penamas.paket-bantuan.index',
+        'create' => 'penamas.paket-bantuan.create',
+        'store' => 'penamas.paket-bantuan.store',
+        'show' => 'penamas.paket-bantuan.show',
+        'edit' => 'penamas.paket-bantuan.edit',
+        'update' => 'penamas.paket-bantuan.update',
+        'destroy' => 'penamas.paket-bantuan.destroy',
+    ]);
+    Route::resource('paket', PaketBantuanController::class); // Alias link singkat
 
     // 5. Stok Bantuan (Placeholder anggota kelompok)
     Route::get('/stok', fn() => view('stok.index'))->name('penamas.stok.index');
