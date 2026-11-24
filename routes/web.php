@@ -37,20 +37,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/pengguna', fn() => view('pengguna.index'))->name('penamas.pengguna.index');
 
     // 3. Data Penerima (F-02: Zaki)
-    Route::resource('penerima', PenerimaController::class)->names([
-        'index' => 'penamas.penerima.index',
-    ]);
-    Route::get('/data-penerima', fn() => redirect()->route('penamas.penerima.index'))->name('penerima.index');
+    Route::resource('penerima', PenerimaController::class);
+    Route::get('/data-penerima', fn() => redirect()->route('penerima.index'))->name('penamas.penerima.index');
 
     // 4. Paket Bantuan (Placeholder - siap diisi PIC Paket Bantuan)
     Route::get('/paket-bantuan', fn() => view('paket-bantuan.index'))->name('penamas.paket-bantuan.index');
 
     // 5. Stok Bantuan (F-04: Aghna)
-    Route::get('/stok', [StokBantuanController::class, 'index'])->name('penamas.stok.index');
-    Route::get('/stok/create', [StokBantuanController::class, 'create'])->name('penamas.stok.create');
+    Route::get('/stok', [StokBantuanController::class, 'index'])->name('stok.index');
+    Route::get('/stok/daftar', fn() => redirect()->route('stok.index'))->name('penamas.stok.index');
+    Route::get('/stok/create', [StokBantuanController::class, 'create'])->name('stok.create');
+    Route::get('/stok/tambah', fn() => redirect()->route('stok.create'))->name('penamas.stok.create');
     Route::post('/stok', [StokBantuanController::class, 'store'])->name('stok.store');
     Route::delete('/stok/{id}', [StokBantuanController::class, 'destroy'])->name('stok.destroy');
-    Route::get('/stok-bantuan', fn() => redirect()->route('penamas.stok.index'))->name('stok.index');
+    Route::get('/stok-bantuan', fn() => redirect()->route('stok.index'));
 
     // 6. Riwayat Mutasi Stok (F-06: Helmi Arif Zulfikar)
     Route::get('/stok/mutasi', [StokMutasiController::class, 'index'])->name('penamas.stok.mutasi');
@@ -64,12 +64,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/distribusi', fn() => view('distribusi.index'))->name('penamas.distribusi.index');
 
     // 8. Penyaluran Bantuan (F-09: Nayaka)
-    Route::get('/penyaluran', [PenyaluranController::class, 'index'])->name('penamas.penyaluran.index');
+    Route::get('/penyaluran', [PenyaluranController::class, 'index'])->name('penyaluran.index');
+    Route::get('/daftar-penyaluran', fn() => redirect()->route('penyaluran.index'))->name('penamas.penyaluran.index');
     Route::get('/penyaluran/{distribusi}', [PenyaluranController::class, 'show'])->name('penyaluran.show');
     Route::post('/penyaluran/{distribusi}/realisasi', [PenyaluranController::class, 'storeRealisasi'])->name('penyaluran.realisasi.store');
     Route::post('/penyaluran/{distribusi}/upload-foto', [PenyaluranController::class, 'uploadFoto'])->name('penyaluran.foto.upload');
     Route::delete('/penyaluran/{distribusi}/hapus-foto', [PenyaluranController::class, 'deleteFoto'])->name('penyaluran.foto.delete');
-    Route::get('/penyaluran-bansos', fn() => redirect()->route('penamas.penyaluran.index'))->name('penyaluran.index');
+    Route::get('/penyaluran-bansos', fn() => redirect()->route('penyaluran.index'));
 
     // 9. Laporan (Placeholder - siap diisi PIC Laporan)
     Route::get('/laporan', fn() => view('laporan.index'))->name('penamas.laporan.index');
