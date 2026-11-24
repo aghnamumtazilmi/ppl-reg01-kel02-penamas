@@ -3,14 +3,6 @@
 @section('page-title', 'Halaman Ringkasan (Dashboard)')
 @section('page-subtitle', 'Ringkasan performa bantuan pangan, kontrol stok gudang, dan pemantauan distribusi Kab. Banyumas')
 
-@section('page-actions')
-    <div style="display: flex; gap: 8px; align-items: center;">
-        <span class="stat-chip stat-chip-green" style="padding: 6px 12px; font-size: 12px;">
-            PIC: Edwin Salman Hakim (F-05)
-        </span>
-    </div>
-@endsection
-
 @section('content')
 <div style="display: flex; flex-direction: column; gap: 20px;">
 
