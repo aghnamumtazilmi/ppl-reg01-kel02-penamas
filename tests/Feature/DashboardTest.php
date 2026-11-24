@@ -29,7 +29,7 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($user)->get('/dashboard');
         $response->assertStatus(200);
         $response->assertSee('Halaman Ringkasan (Dashboard)');
-        $response->assertSee('Edwin Salman Hakim');
+        $response->assertSee('Total Penerima (KPM)');
     }
 
     /**
