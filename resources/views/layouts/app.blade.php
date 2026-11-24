@@ -803,29 +803,12 @@
             <a href="{{ route('penamas.distribusi.index') }}" class="nav-item {{ request()->routeIs('penamas.distribusi.*') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                 <span>Rencana Distribusi</span>
-                @php $pendingCount = \Illuminate\Support\Facades\Schema::hasTable('distribusi') ? \App\Models\Distribusi::where('status', 'diajukan')->count() : 0; @endphp
-                @if($pendingCount > 0)
-                    <span class="nav-badge">{{ $pendingCount }}</span>
-                @endif
             </a>
             @endif
 
             <a href="{{ route('penamas.penyaluran.index') }}" class="nav-item {{ request()->routeIs('penamas.penyaluran.*') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                 <span>{{ $authUser->isPetugas() ? 'Tugas Penyaluran' : 'Penyaluran Bantuan' }}</span>
-                @php
-                    $myTaskCount = 0;
-                    if (\Illuminate\Support\Facades\Schema::hasTable('distribusi')) {
-                        if ($authUser->isPetugas() && $authUser->exists) {
-                            $myTaskCount = $authUser->distribusiDitugaskan()->where('status', 'disetujui')->count();
-                        } else {
-                            $myTaskCount = \App\Models\Distribusi::where('status', 'disetujui')->count();
-                        }
-                    }
-                @endphp
-                @if($myTaskCount > 0)
-                    <span class="nav-badge" style="background: #15803d;">{{ $myTaskCount }}</span>
-                @endif
             </a>
 
             @if($authUser->canManage())
