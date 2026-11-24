@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('page-title', 'Tambah Paket Bantuan')
-@section('page-subtitle', 'Definisikan jenis paket dan komponen takaran komoditas pangan baru (PBI-007)')
+@section('page-subtitle', 'Definisikan jenis paket dan komponen takaran komoditas pangan baru')
 
 @section('page-actions')
     <a href="{{ route('penamas.paket-bantuan.index') }}" class="btn btn-secondary btn-sm">
@@ -41,18 +41,18 @@
         </div>
     </div>
 
-    <!-- Datalist Autocomplete dari Master Stok Gudang (PBI-007 AC-2) -->
+    <!-- Datalist Autocomplete dari Master Stok Gudang -->
     <datalist id="datalistKomoditas">
         @foreach($komoditasList as $k)
             <option value="{{ $k->nama_barang }}" data-satuan="{{ $k->satuan }}">{{ $k->nama_barang }} (Satuan: {{ $k->satuan }})</option>
         @endforeach
     </datalist>
 
-    <!-- Rincian Komponen Barang Dinamis (PBI-007 AC-1) -->
+    <!-- Rincian Komponen Barang Dinamis -->
     <div class="card mb-4">
         <div class="card-header">
             <div>
-                <div class="card-title">Rincian Komponen Barang (PBI-007)</div>
+                <div class="card-title">Rincian Komponen Barang</div>
                 <div class="card-sub">Tambahkan daftar komoditas dan takaran standar yang masuk ke dalam paket ini</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="tambahBaris()">

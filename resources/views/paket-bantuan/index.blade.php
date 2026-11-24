@@ -54,10 +54,10 @@
             <span>Integritas Distribusi</span>
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
         </div>
-        <div class="stat-val" style="font-size: 16px; font-weight: 700; color: #15803d; padding-top: 4px;">PBI-009 Aktif</div>
+        <div class="stat-val" style="font-size: 16px; font-weight: 700; color: #15803d; padding-top: 4px;">Terproteksi</div>
         <div class="stat-footer">
-            <span class="stat-chip stat-chip-green">Proteksi</span>
-            <span>Cegah hapus paket aktif</span>
+            <span class="stat-chip stat-chip-green">Proteksi Aktif</span>
+            <span>Cegah hapus paket terpakai</span>
         </div>
     </div>
 </div>
@@ -125,7 +125,7 @@
                         </td>
                         <td style="text-align: center;">
                             <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                <a href="{{ route('penamas.paket-bantuan.edit', $paket) }}" class="btn btn-secondary btn-xs" title="Ubah Rincian Paket (PBI-008)">
+                                <a href="{{ route('penamas.paket-bantuan.edit', $paket) }}" class="btn btn-secondary btn-xs" title="Ubah Rincian Paket">
                                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     Ubah
                                 </a>
@@ -133,7 +133,7 @@
                                 <form action="{{ route('penamas.paket-bantuan.destroy', $paket) }}" method="POST" style="display: inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus paket bantuan \'{{ addslashes($paket->nama) }}\'?\n\nCatatan: Paket yang sudah terpakai pada riwayat rencana distribusi tidak dapat dihapus.')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-xs" title="Hapus Paket Bantuan (PBI-009)" {{ $paket->distribusi_count > 0 ? 'disabled style=opacity:0.45;cursor:not-allowed;' : '' }}>
+                                    <button type="submit" class="btn btn-danger btn-xs" title="Hapus Paket Bantuan" {{ $paket->distribusi_count > 0 ? 'disabled style=opacity:0.45;cursor:not-allowed;' : '' }}>
                                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                         Hapus
                                     </button>
