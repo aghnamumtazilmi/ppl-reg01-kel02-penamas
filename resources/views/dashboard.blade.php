@@ -3,18 +3,10 @@
 @section('page-title', 'Halaman Ringkasan (Dashboard)')
 @section('page-subtitle', 'Ringkasan performa bantuan pangan, kontrol stok gudang, dan pemantauan distribusi Kab. Banyumas')
 
-@section('page-actions')
-    <div style="display: flex; gap: 8px; align-items: center;">
-        <span class="stat-chip stat-chip-green" style="padding: 6px 12px; font-size: 12px;">
-            PIC: Edwin Salman Hakim (F-05)
-        </span>
-    </div>
-@endsection
-
 @section('content')
 <div style="display: flex; flex-direction: column; gap: 20px;">
 
-    <!-- ─── PBI-013 & PBI-014: 4 STAT CARDS KRAVIO ─── -->
+    <!-- ─── 4 STAT CARDS KRAVIO ─── -->
     <div class="grid grid-4">
         <!-- 1. Total Penerima KPM -->
         <div class="stat-card">
@@ -61,7 +53,7 @@
             </div>
         </div>
 
-        <!-- 4. Menunggu Review Pimpinan (PBI-014) -->
+        <!-- 4. Menunggu Review Pimpinan -->
         <div class="stat-card" style="{{ ($pengajuanMenungguCount ?? 0) > 0 ? 'border-color: var(--tag-amber-border);' : '' }}">
             <div class="stat-label">
                 <span style="color: var(--tag-amber-fg); font-weight: 700;">Menunggu Review</span>
@@ -79,7 +71,7 @@
         </div>
     </div>
 
-    <!-- Alert Stok Menipis (PBI-013) -->
+    <!-- Alert Stok Menipis -->
     @if(isset($stokMenipis) && $stokMenipis->isNotEmpty())
     <div class="alert alert-warning" style="display: flex; align-items: flex-start; gap: 10px;">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px;">
@@ -94,12 +86,12 @@
     </div>
     @endif
 
-    <!-- ─── PBI-014: TABEL RENCANA MENUNGGU PERSETUJUAN PIMPINAN ─── -->
+    <!-- ─── TABEL RENCANA MENUNGGU PERSETUJUAN PIMPINAN ─── -->
     <div class="card" id="tabel-review-pimpinan">
         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
             <div>
                 <div class="card-title">Rencana Distribusi Menunggu Persetujuan</div>
-                <div class="card-sub">PBI-014 (Khusus Pimpinan) &bull; Pengajuan penyaluran yang membutuhkan verifikasi legalitas</div>
+                <div class="card-sub">Khusus Pimpinan &bull; Pengajuan penyaluran yang membutuhkan verifikasi legalitas</div>
             </div>
             @if(($pengajuanMenungguCount ?? 0) > 0)
                 <span class="badge badge-diajukan">{{ $pengajuanMenungguCount }} Rencana Perlu Ditinjau</span>
@@ -156,12 +148,12 @@
         @endif
     </div>
 
-    <!-- ─── PBI-015: TABEL 5 AKTIVITAS DISTRIBUSI TERBARU ─── -->
+    <!-- ─── TABEL 5 AKTIVITAS DISTRIBUSI TERBARU ─── -->
     <div class="card">
         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
             <div>
                 <div class="card-title">5 Aktivitas Distribusi & Penyaluran Terbaru</div>
-                <div class="card-sub">PBI-015 (Monitoring Program) &bull; Rekam jejak seluruh tahapan bantuan di wilayah Banyumas</div>
+                <div class="card-sub">Monitoring Program &bull; Rekam jejak seluruh tahapan bantuan di wilayah Banyumas</div>
             </div>
             <div style="display: flex; gap: 6px;">
                 <span class="stat-chip stat-chip-blue">{{ $distribusiDisalurkanCount ?? 0 }} Disalurkan</span>
