@@ -1,222 +1,254 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Persediaan Stok Bantuan')
+@section('page-title', 'Stok Bantuan')
+@section('page-subtitle', 'Pantau persediaan dan ketersediaan komoditas bantuan pangan di gudang logistik')
+
+@section('page-actions')
+    <a href="{{ route('penamas.stok.create') }}" class="btn btn-primary" style="border-radius: 8px;">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <span>Tambah Komoditas</span>
+    </a>
+@endsection
 
 @section('content')
-<div>
-    <!-- Breadcrumb & Header Halaman -->
-    <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1.5">
-                <span>Gudang Logistik</span>
-                <span>&rsaquo;</span>
-                <span class="text-slate-800 font-semibold">PBI-011: Pemantauan Stok Barang</span>
-            </div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Persediaan Bantuan Pangan di Gudang</h1>
-            <p class="text-sm text-slate-500 mt-0.5">Pantau ketersediaan fisik bahan pangan secara real-time untuk mendukung rencana pembagian bantuan.</p>
+<!-- 4 Kartu KPI Ringkasan Status Stok -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+    <!-- Card 1: Total Komoditas -->
+    <div class="stat-card" style="border-radius: 14px;">
+        <div class="stat-label">
+            <span>Total Komoditas</span>
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
         </div>
-
-        <div>
-            <a 
-                href="{{ route('stok.create') }}" 
-                class="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition"
-            >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                <span>Tambah Komoditas Baru</span>
-            </a>
+        <div class="stat-val">{{ $totalJenisBarang }}</div>
+        <div class="stat-footer">
+            <span>{{ $totalJenisBarang }} jenis terdaftar</span>
         </div>
     </div>
 
-    <!-- 4 Kartu KPI Ringkasan Status Stok -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <!-- Card 1: Total Komoditas -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-            </div>
-            <div>
-                <p class="text-xs text-slate-500 font-medium">Total Komoditas</p>
-                <p class="text-xl font-bold text-slate-900">{{ $totalJenisBarang }} <span class="text-xs font-normal text-slate-500">jenis</span></p>
-            </div>
+    <!-- Card 2: Stok Tersedia -->
+    <div class="stat-card" style="border-radius: 14px;">
+        <div class="stat-label">
+            <span>Stok Tersedia</span>
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-
-        <!-- Card 2: Stok Tersedia -->
-        <div class="bg-white p-4 rounded-2xl border border-emerald-100 bg-emerald-50/20 shadow-sm flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 1118 0z"></path></svg>
-            </div>
-            <div>
-                <p class="text-xs text-emerald-700 font-medium">Stok Tersedia (>10)</p>
-                <p class="text-xl font-bold text-emerald-800">{{ $stokTersedia }} <span class="text-xs font-normal text-emerald-600">barang</span></p>
-            </div>
-        </div>
-
-        <!-- Card 3: Stok Menipis -->
-        <div class="bg-white p-4 rounded-2xl border border-amber-100 bg-amber-50/20 shadow-sm flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            </div>
-            <div>
-                <p class="text-xs text-amber-700 font-medium">Stok Menipis (1-10)</p>
-                <p class="text-xl font-bold text-amber-800">{{ $stokMenipis }} <span class="text-xs font-normal text-amber-600">barang</span></p>
-            </div>
-        </div>
-
-        <!-- Card 4: Stok Habis -->
-        <div class="bg-white p-4 rounded-2xl border border-rose-100 bg-rose-50/20 shadow-sm flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center text-rose-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-            </div>
-            <div>
-                <p class="text-xs text-rose-700 font-medium">Stok Habis (0)</p>
-                <p class="text-xl font-bold text-rose-800">{{ $stokHabis }} <span class="text-xs font-normal text-rose-600">barang</span></p>
-            </div>
+        <div class="stat-val" style="color: var(--tag-green-fg);">{{ $stokTersedia }}</div>
+        <div class="stat-footer">
+            <span>Siap disalurkan</span>
+            <span class="stat-chip stat-chip-green" style="border-radius: 6px;">Tersedia</span>
         </div>
     </div>
 
-    <!-- Filter Pencarian & Tabel -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <!-- Search Toolbar -->
-        <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <form action="{{ route('stok.index') }}" method="GET" class="flex items-center space-x-2 w-full sm:max-w-md">
-                <div class="relative flex-1">
-                    <input 
-                        type="text" 
-                        name="search" 
-                        value="{{ $search }}" 
-                        placeholder="Cari nama komoditas pangan..." 
-                        class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-slate-50 focus:bg-white transition"
-                    >
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </div>
-                </div>
-                <button 
-                    type="submit" 
-                    class="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition"
-                >
-                    Cari
-                </button>
-                @if($search)
-                    <a 
-                        href="{{ route('stok.index') }}" 
-                        class="text-xs text-slate-500 hover:text-slate-800 underline px-1 py-1"
-                    >
-                        Reset
-                    </a>
-                @endif
-            </form>
-
-            <div class="text-xs text-slate-500">
-                Menampilkan <span class="font-semibold text-slate-800">{{ $stokList->total() }}</span> data komoditas
-            </div>
+    <!-- Card 3: Stok Menipis -->
+    <div class="stat-card" style="border-radius: 14px;">
+        <div class="stat-label">
+            <span>Stok Menipis</span>
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
         </div>
-
-        <!-- Tabel Data Stok -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-600">
-                <thead class="bg-slate-50/75 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    <tr>
-                        <th class="py-3 px-4 w-12 text-center">No</th>
-                        <th class="py-3 px-4">Nama Komoditas Pangan</th>
-                        <th class="py-3 px-4">Satuan</th>
-                        <th class="py-3 px-4 text-right">Jumlah Sisa Stok</th>
-                        <th class="py-3 px-4 text-center">Status Ketersediaan</th>
-                        <th class="py-3 px-4 text-right">Pembaruan Terakhir</th>
-                        <th class="py-3 px-4 text-center w-20">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @forelse($stokList as $index => $item)
-                        <tr class="hover:bg-slate-50/80 transition">
-                            <td class="py-3.5 px-4 text-center text-xs text-slate-400 font-mono">
-                                {{ $stokList->firstItem() + $index }}
-                            </td>
-                            <td class="py-3.5 px-4 font-semibold text-slate-900">
-                                {{ $item->nama_barang }}
-                            </td>
-                            <td class="py-3.5 px-4 text-slate-600">
-                                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-xs text-slate-700 font-medium">
-                                    {{ $item->satuan }}
-                                </span>
-                            </td>
-                            <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 text-base">
-                                {{ number_format($item->jumlah, 0, ',', '.') }}
-                            </td>
-                            <td class="py-3.5 px-4 text-center">
-                                @if($item->jumlah > 10)
-                                    <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                        <span>Tersedia</span>
-                                    </span>
-                                @elseif($item->jumlah > 0)
-                                    <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                        <span>Menipis</span>
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                        <span>Habis</span>
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="py-3.5 px-4 text-right text-xs text-slate-400 font-mono">
-                                {{ $item->updated_at ? $item->updated_at->format('d/m/Y H:i') : '-' }}
-                            </td>
-                            <td class="py-3.5 px-4 text-center">
-                                <form 
-                                    action="{{ route('stok.destroy', $item->id) }}" 
-                                    method="POST" 
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus komoditas {{ $item->nama_barang }} dari gudang? Tindakan ini tidak dapat dibatalkan.');"
-                                    class="inline-block"
-                                >
-                                    @csrf
-                                    @method('DELETE')
-                                    <button 
-                                        type="submit" 
-                                        class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" 
-                                        title="Hapus Komoditas"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="py-12 text-center text-slate-400">
-                                <div class="max-w-xs mx-auto flex flex-col items-center">
-                                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                                    </div>
-                                    <p class="font-semibold text-slate-700 text-sm">Belum Ada Data Komoditas</p>
-                                    <p class="text-xs text-slate-500 mt-1">
-                                        @if($search)
-                                            Tidak ditemukan komoditas dengan kata kunci "<strong>{{ $search }}</strong>".
-                                        @else
-                                            Belum ada komoditas pangan yang didaftarkan di gudang.
-                                        @endif
-                                    </p>
-                                    @if($search)
-                                        <a href="{{ route('stok.index') }}" class="mt-3 text-xs text-emerald-600 hover:underline font-semibold">Tampilkan Semua Data</a>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="stat-val" style="color: var(--tag-amber-fg);">{{ $stokMenipis }}</div>
+        <div class="stat-footer">
+            <span>Perlu pengadaan</span>
+            <span class="stat-chip stat-chip-amber" style="border-radius: 6px;">Menipis</span>
         </div>
+    </div>
 
-        <!-- Pagination Footer -->
-        @if($stokList->hasPages())
-            <div class="p-4 border-t border-slate-100">
-                {{ $stokList->links() }}
-            </div>
-        @endif
+    <!-- Card 4: Stok Habis -->
+    <div class="stat-card" style="border-radius: 14px;">
+        <div class="stat-label">
+            <span>Stok Habis</span>
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+        </div>
+        <div class="stat-val" style="color: var(--tag-red-fg);">{{ $stokHabis }}</div>
+        <div class="stat-footer">
+            <span>Segera restock</span>
+            <span class="stat-chip stat-chip-rose" style="border-radius: 6px;">Habis</span>
+        </div>
     </div>
 </div>
+
+<!-- Card Tabel & Pencarian -->
+<div class="card" style="border-radius: 14px; padding: 20px;">
+    <!-- Toolbar Pencarian -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div>
+            <div class="card-title">Daftar Komoditas Logistik Gudang</div>
+            <div class="card-sub">Menampilkan {{ $stokList->total() }} jenis komoditas bahan pangan</div>
+        </div>
+        <form action="{{ route('penamas.stok.index') }}" method="GET" style="display: flex; gap: 8px; align-items: center; margin: 0;">
+            <input 
+                type="text" 
+                name="search" 
+                value="{{ $search }}" 
+                placeholder="Cari nama komoditas..." 
+                class="form-input" 
+                style="padding: 6px 12px; font-size: 12px; width: 220px; border-radius: 8px;"
+            >
+            <button type="submit" class="btn btn-secondary btn-sm" style="border-radius: 8px;">Cari</button>
+            @if($search)
+                <a href="{{ route('penamas.stok.index') }}" class="btn btn-ghost btn-sm" style="border-radius: 8px;">Reset</a>
+            @endif
+        </form>
+    </div>
+
+    <!-- Tabel Data Stok (Container mandiri di dalam Card) -->
+    <div class="table-wrap" style="border: 1px solid var(--border); border-radius: 10px; overflow: hidden;">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 48px; text-align: center;">No</th>
+                    <th>Nama Komoditas Pangan</th>
+                    <th>Satuan</th>
+                    <th style="text-align: right;">Jumlah Sisa Stok</th>
+                    <th style="text-align: center;">Status Ketersediaan</th>
+                    <th style="text-align: right;">Pembaruan Terakhir</th>
+                    <th style="text-align: center; width: 80px;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($stokList as $index => $item)
+                    <tr>
+                        <td style="text-align: center; color: var(--text-3); font-size: 11px;">
+                            {{ $stokList->firstItem() + $index }}
+                        </td>
+                        <td style="font-weight: 600; color: var(--text-1);">
+                            {{ $item->nama_barang }}
+                        </td>
+                        <td>
+                            <span class="badge badge-draft" style="border-radius: 6px;">{{ $item->satuan }}</span>
+                        </td>
+                        <td style="text-align: right; font-weight: 700; font-size: 13.5px; color: var(--text-1);">
+                            {{ number_format($item->jumlah, 0, ',', '.') }}
+                        </td>
+                        <td style="text-align: center;">
+                            @if($item->jumlah > 10)
+                                <span class="badge badge-disetujui" style="border-radius: 6px;">Tersedia</span>
+                            @elseif($item->jumlah > 0)
+                                <span class="badge badge-diajukan" style="border-radius: 6px;">Menipis</span>
+                            @else
+                                <span class="badge badge-ditolak" style="border-radius: 6px;">Habis</span>
+                            @endif
+                        </td>
+                        <td style="text-align: right; color: var(--text-3); font-size: 11.5px;">
+                            {{ $item->updated_at ? $item->updated_at->format('d/m/Y H:i') : '-' }}
+                        </td>
+                        <td style="text-align: center;">
+                            <button 
+                                type="button" 
+                                class="btn btn-danger btn-xs" 
+                                title="Hapus Komoditas"
+                                style="padding: 4px 6px; border-radius: 6px;"
+                                onclick="openDeleteModal('{{ route('penamas.stok.destroy', $item->id) }}', '{{ addslashes($item->nama_barang) }}')"
+                            >
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 48px 16px;">
+                            <div class="empty-state">
+                                <p style="font-weight: 600; color: var(--text-2); margin-bottom: 4px;">Belum Ada Data Komoditas</p>
+                                <p style="font-size: 12px; color: var(--text-3);">
+                                    @if($search)
+                                        Tidak ditemukan komoditas dengan kata kunci "<strong>{{ $search }}</strong>".
+                                    @else
+                                        Belum ada komoditas pangan yang didaftarkan di gudang.
+                                    @endif
+                                </p>
+                                @if($search)
+                                    <div style="margin-top: 10px;">
+                                        <a href="{{ route('penamas.stok.index') }}" class="btn btn-secondary btn-xs">Tampilkan Semua Data</a>
+                                    </div>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Footer -->
+    @if($stokList->hasPages())
+        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border);">
+            {{ $stokList->links() }}
+        </div>
+    @endif
+</div>
+
+<!-- Modal Dialog Verifikasi Hapus Komoditas -->
+<div 
+    id="deleteModal" 
+    style="display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px); padding: 16px;"
+    onclick="if(event.target === this) closeDeleteModal();"
+>
+    <div 
+        class="card" 
+        style="max-width: 440px; width: 100%; border-radius: 16px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1); border: 1px solid var(--border);"
+    >
+        <!-- Icon Warning & Judul -->
+        <div style="display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px;">
+            <div style="width: 42px; height: 42px; border-radius: 10px; background: var(--tag-red-bg); border: 1px solid var(--tag-red-border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 20px; height: 20px; color: var(--tag-red-fg);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <div>
+                <h3 style="font-size: 15px; font-weight: 700; color: var(--text-1); margin: 0 0 4px 0;">Konfirmasi Hapus Komoditas</h3>
+                <p style="font-size: 12.5px; color: var(--text-2); margin: 0; line-height: 1.5;">
+                    Apakah Anda yakin ingin menghapus komoditas <strong id="modalNamaBarang" style="color: var(--text-1);"></strong> dari persediaan gudang?
+                </p>
+            </div>
+        </div>
+
+        <div style="padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; font-size: 11.5px; color: var(--text-3); display: flex; align-items: center; gap: 6px;">
+            <svg style="width: 14px; height: 14px; flex-shrink: 0; color: #ef4444;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <span>Tindakan ini tidak dapat dibatalkan jika komoditas telah dihapus.</span>
+        </div>
+
+        <!-- Tombol Aksi Modal -->
+        <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button 
+                type="button" 
+                class="btn btn-secondary" 
+                style="border-radius: 8px; padding: 7px 14px;"
+                onclick="closeDeleteModal()"
+            >
+                Batal
+            </button>
+            <form id="deleteForm" method="POST" style="margin: 0;">
+                @csrf
+                @method('DELETE')
+                <button 
+                    type="submit" 
+                    class="btn btn-danger" 
+                    style="border-radius: 8px; padding: 7px 16px;"
+                >
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 13px; height: 13px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    <span>Ya, Hapus</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeleteModal(actionUrl, namaBarang) {
+        document.getElementById('deleteForm').action = actionUrl;
+        document.getElementById('modalNamaBarang').textContent = namaBarang;
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    // Tutup modal jika tombol Escape ditekan
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeDeleteModal();
+        }
+    });
+</script>
 @endsection

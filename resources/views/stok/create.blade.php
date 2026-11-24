@@ -1,31 +1,31 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Komoditas Pangan Baru')
+@section('page-title', 'Tambah Komoditas Baru')
+@section('page-subtitle', 'Daftarkan jenis komoditas bahan pangan baru beserta satuan dan persediaan awal di gudang logistik')
+
+@section('page-actions')
+    <a href="{{ route('penamas.stok.index') }}" class="btn btn-secondary" style="border-radius: 8px;">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 13px; height: 13px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        <span>Kembali ke Daftar Stok</span>
+    </a>
+@endsection
 
 @section('content')
-<div class="max-w-2xl mx-auto">
-    <!-- Header Halaman -->
-    <div class="mb-6">
-        <div class="flex items-center space-x-2 text-xs text-slate-500 mb-2">
-            <span>Gudang Logistik</span>
-            <span>&rsaquo;</span>
-            <a href="{{ route('stok.index') }}" class="text-slate-600 hover:text-emerald-700">Kelola Stok</a>
-            <span>&rsaquo;</span>
-            <span class="text-slate-800 font-semibold">PBI-010: Tambah Komoditas Baru</span>
+<div style="max-width: 640px; margin: 0 auto; width: 100%;">
+    <div class="card" style="border-radius: 14px; padding: 24px;">
+        <!-- Header Formulir dengan garis pemisah yang seragam -->
+        <div style="margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
+            <div class="card-title" style="font-size: 14px; font-weight: 600; color: var(--text-1);">Formulir Pendaftaran Komoditas Pangan</div>
+            <div class="card-sub" style="margin-top: 2px;">Lengkapi data komoditas pangan yang masuk ke gudang logistik</div>
         </div>
-        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Catat Komoditas Pangan Baru</h1>
-        <p class="text-sm text-slate-500 mt-1">Daftarkan jenis komoditas bahan pangan baru beserta satuan dan persediaan awal di gudang.</p>
-    </div>
 
-    <!-- Card Formulir -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-        <form action="{{ route('stok.store') }}" method="POST">
+        <form action="{{ route('penamas.stok.store') }}" method="POST">
             @csrf
 
             <!-- Field 1: Nama Barang -->
-            <div class="mb-5">
-                <label for="nama_barang" class="block text-sm font-semibold text-slate-700 mb-1.5">
-                    Nama Komoditas Pangan <span class="text-rose-500">*</span>
+            <div class="form-group">
+                <label for="nama_barang" class="form-label">
+                    Nama Komoditas Pangan <span style="color: #ef4444;">*</span>
                 </label>
                 <input 
                     type="text" 
@@ -33,102 +33,144 @@
                     name="nama_barang" 
                     value="{{ old('nama_barang') }}"
                     placeholder="Contoh: Beras Premium, Minyak Goreng, Gula Pasir" 
-                    class="w-full px-4 py-2.5 rounded-xl border @error('nama_barang') border-rose-400 bg-rose-50/30 text-rose-900 @else border-slate-300 bg-white text-slate-800 @enderror focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition"
+                    class="form-input"
+                    style="width: 100%; border-radius: 8px;"
                     required
                 >
                 @error('nama_barang')
-                    <p class="text-xs text-rose-600 mt-1.5 flex items-center space-x-1">
-                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                        <span>{{ $message }}</span>
-                    </p>
-                @else
-                    <p class="text-xs text-slate-400 mt-1">Pastikan nama barang spesifik dan belum pernah didaftarkan sebelumnya.</p>
+                    <p class="form-error">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Field 2: Satuan Barang -->
-            <div class="mb-5">
-                <label for="satuan" class="block text-sm font-semibold text-slate-700 mb-1.5">
-                    Satuan Barang <span class="text-rose-500">*</span>
+            <!-- Field 2: Satuan (Custom Dropdown Ber-Corner Radius Halus) -->
+            <div class="form-group" style="position: relative;">
+                <label for="satuan_trigger" class="form-label">
+                    Satuan Kuantitas <span style="color: #ef4444;">*</span>
                 </label>
-                <div class="relative">
-                    <select 
-                        id="satuan" 
-                        name="satuan" 
-                        class="w-full px-4 py-2.5 rounded-xl border @error('satuan') border-rose-400 bg-rose-50/30 text-rose-900 @else border-slate-300 bg-white text-slate-800 @enderror focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition appearance-none cursor-pointer"
-                        required
-                    >
-                        <option value="" disabled {{ old('satuan') ? '' : 'selected' }}>-- Pilih Satuan Barang --</option>
-                        @foreach($satuanOptions as $key => $label)
-                            <option value="{{ $key }}" {{ old('satuan') == $key ? 'selected' : '' }}>
-                                {{ $label }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
+                
+                <!-- Hidden input untuk menangkap value ke backend Laravel -->
+                <input type="hidden" name="satuan" id="satuan_input" value="{{ old('satuan') }}" required>
+
+                <!-- Trigger Button Dropdown -->
+                <button 
+                    type="button" 
+                    id="satuan_trigger"
+                    class="form-input" 
+                    style="width: 100%; border-radius: 8px; padding: 9px 14px; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: var(--surface); color: var(--text-1);"
+                    onclick="toggleDropdownMenu()"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                >
+                    <span id="selected_satuan_label" style="font-size: 12.5px; color: {{ old('satuan') ? 'var(--text-1)' : 'var(--text-3)' }}; font-weight: 500;">
+                        @php
+                            $satuanLabels = [
+                                'kg' => 'kg (Kilogram)',
+                                'liter' => 'liter (Liter)',
+                                'dus' => 'dus (Dus / Karton)',
+                                'kaleng' => 'kaleng (Kaleng)',
+                                'pack' => 'pack (Pack / Bungkus)',
+                                'karung' => 'karung (Karung)',
+                                'botol' => 'botol (Botol)',
+                            ];
+                        @endphp
+                        {{ old('satuan') ? ($satuanLabels[old('satuan')] ?? old('satuan')) : '-- Pilih Satuan Kuantitas --' }}
+                    </span>
+                    <svg id="dropdown_arrow" style="width: 14px; height: 14px; color: var(--text-3); transition: transform 0.2s;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <!-- Menu Card Dropdown dengan Corner Radius 12px & Shadow Halus -->
+                <div 
+                    id="satuan_menu" 
+                    style="display: none; position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 50; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.15), 0 6px 12px -4px rgba(0, 0, 0, 0.08); padding: 6px; max-height: 240px; overflow-y: auto;"
+                    role="listbox"
+                >
+                    @foreach($satuanLabels as $val => $label)
+                        <div 
+                            class="dropdown-item" 
+                            style="padding: 8px 12px; border-radius: 7px; font-size: 12.5px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: background 0.12s, color 0.12s; color: var(--text-1);"
+                            onmouseover="this.style.background='var(--active-bg)'"
+                            onmouseout="this.style.background='transparent'"
+                            onclick="selectSatuanOption('{{ $val }}', '{{ $label }}')"
+                        >
+                            <span style="font-weight: 500;">{{ $label }}</span>
+                            <span class="badge badge-draft" style="border-radius: 5px; font-size: 10.5px;">{{ $val }}</span>
+                        </div>
+                    @endforeach
                 </div>
+
                 @error('satuan')
-                    <p class="text-xs text-rose-600 mt-1.5 flex items-center space-x-1">
-                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                        <span>{{ $message }}</span>
-                    </p>
+                    <p class="form-error">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Field 3: Jumlah Stok Awal -->
-            <div class="mb-6">
-                <label for="jumlah" class="block text-sm font-semibold text-slate-700 mb-1.5">
-                    Jumlah Stok Awal di Gudang
+            <!-- Field 3: Jumlah Awal -->
+            <div class="form-group">
+                <label for="jumlah" class="form-label">
+                    Jumlah Fisik Awal di Gudang <span style="color: #ef4444;">*</span>
                 </label>
-                <div class="relative">
-                    <input 
-                        type="number" 
-                        id="jumlah" 
-                        name="jumlah" 
-                        value="{{ old('jumlah', 0) }}"
-                        step="1"
-                        placeholder="0" 
-                        class="w-full px-4 py-2.5 rounded-xl border @error('jumlah') border-rose-400 bg-rose-50/30 text-rose-900 @else border-slate-300 bg-white text-slate-800 @enderror focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition"
-                    >
-                </div>
+                <input 
+                    type="number" 
+                    id="jumlah" 
+                    name="jumlah" 
+                    value="{{ old('jumlah', 0) }}"
+                    class="form-input"
+                    style="width: 100%; border-radius: 8px;"
+                    required
+                >
                 @error('jumlah')
-                    <p class="text-xs text-rose-600 mt-1.5 flex items-center space-x-1">
-                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                        <span>{{ $message }}</span>
-                    </p>
-                @else
-                    <p class="text-xs text-slate-400 mt-1">Isi 0 jika stok fisik belum diterima di gudang saat pendaftaran master barang.</p>
+                    <p class="form-error">{{ $message }}</p>
                 @enderror
             </div>
 
             <!-- Tombol Aksi -->
-            <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-                <a 
-                    href="{{ route('stok.index') }}" 
-                    class="text-xs text-slate-500 hover:text-slate-800 font-medium flex items-center space-x-1"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    <span>Kembali ke Daftar Stok</span>
-                </a>
-                <div class="flex items-center space-x-3">
-                    <button 
-                        type="reset" 
-                        class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition"
-                    >
-                        Reset Form
-                    </button>
-                    <button 
-                        type="submit" 
-                        class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition flex items-center space-x-1.5"
-                    >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span>Simpan Komoditas</span>
-                    </button>
-                </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px;">
+                <a href="{{ route('penamas.stok.index') }}" class="btn btn-secondary" style="border-radius: 8px; padding: 7px 14px;">Batal</a>
+                <button type="submit" class="btn btn-primary" style="border-radius: 8px; padding: 7px 16px;">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 13px; height: 13px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span>Simpan Komoditas</span>
+                </button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    function toggleDropdownMenu() {
+        const menu = document.getElementById('satuan_menu');
+        const arrow = document.getElementById('dropdown_arrow');
+        const trigger = document.getElementById('satuan_trigger');
+        const isOpen = menu.style.display === 'block';
+
+        if (isOpen) {
+            menu.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)';
+            trigger.setAttribute('aria-expanded', 'false');
+        } else {
+            menu.style.display = 'block';
+            arrow.style.transform = 'rotate(180deg)';
+            trigger.setAttribute('aria-expanded', 'true');
+        }
+    }
+
+    function selectSatuanOption(value, label) {
+        document.getElementById('satuan_input').value = value;
+        const labelEl = document.getElementById('selected_satuan_label');
+        labelEl.textContent = label;
+        labelEl.style.color = 'var(--text-1)';
+        toggleDropdownMenu();
+    }
+
+    // Tutup dropdown jika klik di luar
+    document.addEventListener('click', function(event) {
+        const trigger = document.getElementById('satuan_trigger');
+        const menu = document.getElementById('satuan_menu');
+        if (trigger && menu && !trigger.contains(event.target) && !menu.contains(event.target)) {
+            menu.style.display = 'none';
+            document.getElementById('dropdown_arrow').style.transform = 'rotate(0deg)';
+            trigger.setAttribute('aria-expanded', 'false');
+        }
+    });
+</script>
 @endsection
