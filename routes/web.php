@@ -2,14 +2,13 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PenerimaController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - PENAMAS
+| Web Routes - PENAMAS (Sprint 1 Integration)
 |--------------------------------------------------------------------------
-| Fitur F-01: Kelola Akun Pengguna (Sprint 1)
-| PIC: Riyan Saefuloh
 |*/
 
 // Autentikasi Pengguna (Login & Logout)
@@ -31,8 +30,6 @@ Route::middleware('auth')->group(function () {
 
     // 2. Resource route utama fitur Kelola Pengguna (PIC: Riyan Saefuloh)
     Route::resource('users', UserController::class);
-
-    // Alias route penamas.pengguna.* agar kompatibel dengan layout & navigasi
     Route::get('/pengguna', [UserController::class, 'index'])->name('penamas.pengguna.index');
     Route::get('/pengguna/create', [UserController::class, 'create'])->name('penamas.pengguna.create');
     Route::post('/pengguna', [UserController::class, 'store'])->name('penamas.pengguna.store');
@@ -41,8 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/pengguna/{user}', [UserController::class, 'update'])->name('penamas.pengguna.update');
     Route::delete('/pengguna/{user}', [UserController::class, 'destroy'])->name('penamas.pengguna.destroy');
 
-    // 3. Data Penerima (Placeholder anggota kelompok)
-    Route::get('/penerima', fn() => view('penerima.index'))->name('penamas.penerima.index');
+    // 3. Resource route Data Penerima Bantuan (F-02: PBI-004, PBI-005, PBI-006)
+    Route::resource('penerima', PenerimaController::class);
+    Route::get('/data-penerima', [PenerimaController::class, 'index'])->name('penamas.penerima.index');
 
     // 4. Paket Bantuan (Placeholder anggota kelompok)
     Route::get('/paket-bantuan', fn() => view('paket-bantuan.index'))->name('penamas.paket-bantuan.index');
