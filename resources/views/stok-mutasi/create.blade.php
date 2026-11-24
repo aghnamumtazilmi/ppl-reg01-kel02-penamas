@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PBI-016 : Catat Mutasi Masuk Stok Gudang - PENAMAS</title>
+    <title>Catat Mutasi Masuk Stok Gudang - PENAMAS</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,15 +13,25 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen py-8 antialiased">
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased flex flex-col">
 
-    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+    <!-- Universal Navigation Bar -->
+    @include('layouts.navbar')
+
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full flex-1">
 
         <!-- Navigasi Breadcrumb -->
         <nav class="flex items-center space-x-2 text-xs text-slate-500 mb-4">
-            <a href="{{ route('stok-mutasi.index') }}" class="hover:text-blue-700 transition">Mutasi Stok Gudang</a>
+            <a href="{{ route('stok.index') }}" class="hover:text-blue-700 transition flex items-center space-x-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>Menu Utama</span>
+            </a>
             <span>/</span>
-            <span class="text-slate-800 font-semibold">Catat Mutasi Masuk (PBI-016)</span>
+            <a href="{{ route('stok-mutasi.index') }}" class="hover:text-blue-700 transition">Mutasi Stok</a>
+            <span>/</span>
+            <span class="text-slate-800 font-semibold">Catat Mutasi Masuk</span>
         </nav>
 
         <!-- Header Card -->
@@ -29,20 +39,29 @@
             <div>
                 <div class="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-blue-600/60 border border-blue-400/30 text-xs font-semibold text-blue-100 mb-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Sprint 1 • Feature F-06 • PBI-016</span>
+                    <span>Penerimaan Bahan Pangan Gudang</span>
                 </div>
                 <h1 class="text-2xl font-extrabold tracking-tight">Pencatatan Mutasi Barang Masuk</h1>
                 <p class="text-blue-100 text-sm mt-1">
                     Mencatat penerimaan komoditas bansos dari pengadaan dinas, donatur, atau hibah pangan.
                 </p>
             </div>
-            <a href="{{ route('stok-mutasi.index') }}"
-               class="inline-flex items-center space-x-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold rounded-xl text-xs backdrop-blur-sm transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                <span>Kembali ke Riwayat</span>
-            </a>
+            <div class="flex items-center space-x-2">
+                <a href="{{ route('stok-mutasi.index') }}"
+                   class="inline-flex items-center space-x-1.5 px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold rounded-xl text-xs backdrop-blur-sm transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    <span>Riwayat Mutasi</span>
+                </a>
+                <a href="{{ route('stok.index') }}"
+                   class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white font-bold rounded-xl text-xs backdrop-blur-sm transition shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <span>Menu Utama</span>
+                </a>
+            </div>
         </div>
 
         <!-- Form Card Container -->
@@ -84,7 +103,7 @@
                                         data-jumlah="{{ $barang->jumlah }}"
                                         data-nama="{{ $barang->nama_barang }}"
                                         {{ old('stok_bantuan_id') == $barang->id ? 'selected' : '' }}>
-                                    {{ $barang->nama_barang }} &nbsp;—&nbsp; Saldo Saat Ini: {{ number_format($barang->jumlah) }} {{ $barang->satuan }}
+                                    {{ $barang->nama_barang }} &nbsp;—&nbsp; Stok Barang Tersedia: {{ number_format($barang->jumlah) }} {{ $barang->satuan }}
                                 </option>
                             @endforeach
                         </select>
@@ -127,13 +146,13 @@
                             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                             </svg>
-                            <span>Simulasi Akumulasi Stok Otomatis [AC-2]</span>
+                            <span>Simulasi Akumulasi Stok Otomatis</span>
                         </span>
                         <span class="text-[11px] text-blue-600 font-medium">Auto-Calculate</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-center pt-1">
                         <div class="bg-white/80 p-2.5 rounded-lg border border-blue-100">
-                            <span class="text-[11px] text-slate-500 block">Saldo Saat Ini</span>
+                            <span class="text-[11px] text-slate-500 block">Stok Barang Tersedia</span>
                             <span class="text-sm font-bold text-slate-800" id="simSaldoLama">0</span>
                         </div>
                         <div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">

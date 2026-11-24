@@ -41,6 +41,14 @@ class StokMutasiController extends Controller
             $query->where('tipe', $request->tipe);
         }
 
+        // Filter rentang tanggal mutasi (PBI-018: Audit Riwayat Mutasi)
+        if ($request->filled('tanggal_mulai')) {
+            $query->whereDate('created_at', '>=', $request->tanggal_mulai);
+        }
+        if ($request->filled('tanggal_selesai')) {
+            $query->whereDate('created_at', '<=', $request->tanggal_selesai);
+        }
+
         // Filter spesifik ID barang
         if ($request->filled('stok_bantuan_id')) {
             $query->where('stok_bantuan_id', $request->stok_bantuan_id);
@@ -142,7 +150,7 @@ class StokMutasiController extends Controller
 
         $pesanSukses = "Mutasi masuk berhasil dicatat! Stok {$barang->nama_barang} bertambah +" . 
             number_format($validated['jumlah']) . " {$barang->satuan}. " .
-            "(Total saldo saat ini: " . number_format($barang->jumlah) . " {$barang->satuan}).";
+            "(Total stok saat ini: " . number_format($barang->jumlah) . " {$barang->satuan}).";
 
         return redirect()->route('stok-mutasi.index')->with('success', $pesanSukses);
     }
@@ -165,31 +173,55 @@ class StokMutasiController extends Controller
     }
 
     /**
-     * [PBI-017] Memproses mutasi keluar & validasi ketersediaan saldo stok
+     * [PBI-017] Memproses mutasi keluar manual & validasi pencegahan stok minus
+     * Acceptance Criteria:
+     * 1. Admin memilih tipe keluar, mengisi jumlah barang, dan menulis alasan pengeluaran.
+     * 2. Sistem mencegah pengeluaran jika jumlah melebihi stok yang tersedia.
      */
     public function storeKeluar(Request $request)
     {
         $validated = $request->validate([
-            'stok_bantuan_id' => 'required|exists:stok_bantuan,id',
-            'jumlah'          => 'required|integer|min:1',
-            'keterangan'      => 'required|string|min:5|max:500',
+            'stok_bantuan_id' => [
+                'required',
+                'exists:stok_bantuan,id',
+            ],
+            'tipe_keluar' => [
+                'required',
+                'string',
+                'in:Barang Rusak,Kadaluarsa,Penyusutan / Selisih Fisik,Distribusi Darurat / Khusus,Lainnya',
+            ],
+            'jumlah' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+            'keterangan' => [
+                'required',
+                'string',
+                'min:5',
+                'max:500',
+            ],
         ], [
-            'stok_bantuan_id.required' => 'Nama barang wajib dipilih.',
-            'stok_bantuan_id.exists'   => 'Barang tidak ditemukan dalam sistem.',
-            'jumlah.required'          => 'Jumlah barang keluar wajib diisi.',
-            'jumlah.integer'           => 'Jumlah keluar harus berupa angka bulat.',
-            'jumlah.min'               => 'Jumlah keluar minimal 1.',
-            'keterangan.required'      => 'Alasan barang keluar/rusak wajib diisi.',
+            'stok_bantuan_id.required' => 'Nama komoditas barang wajib dipilih.',
+            'stok_bantuan_id.exists'   => 'Komoditas barang tidak ditemukan dalam sistem.',
+            'tipe_keluar.required'     => 'Tipe pengeluaran barang wajib dipilih.',
+            'tipe_keluar.in'           => 'Pilihan tipe pengeluaran barang tidak valid.',
+            'jumlah.required'          => 'Jumlah volume barang keluar wajib diisi.',
+            'jumlah.integer'           => 'Jumlah keluar harus berupa bilangan bulat positif.',
+            'jumlah.min'               => 'Jumlah keluar minimal 1 unit/satuan.',
+            'keterangan.required'      => 'Alasan atau keterangan pengeluaran wajib diisi.',
+            'keterangan.min'           => 'Alasan pengeluaran minimal 5 karakter agar informatif.',
+            'keterangan.max'           => 'Alasan pengeluaran tidak boleh melebihi 500 karakter.',
         ]);
 
         $stok = StokBantuan::findOrFail($validated['stok_bantuan_id']);
 
-        // [Kriteria 2] Validasi proteksi saldo minus
+        // [Kriteria 2] Sistem mencegah pengeluaran jika jumlah melebihi stok yang tersedia
         if ($validated['jumlah'] > $stok->jumlah) {
             return back()
                 ->withInput()
                 ->withErrors([
-                    'jumlah' => "Jumlah keluar ({$validated['jumlah']} {$stok->satuan}) melebihi saldo gudang saat ini ({$stok->jumlah} {$stok->satuan})!",
+                    'jumlah' => "Sistem menolak pengeluaran! Jumlah keluar ({$validated['jumlah']} {$stok->satuan}) melebihi stok yang tersedia di gudang ({$stok->jumlah} {$stok->satuan}).",
                 ]);
         }
 
@@ -197,19 +229,31 @@ class StokMutasiController extends Controller
             ?? User::where('role', 'admin')->first()?->id 
             ?? 1;
 
-        DB::transaction(function () use ($validated, $stok, $userId) {
+        $keteranganFormat = "[{$validated['tipe_keluar']}] " . trim($validated['keterangan']);
+
+        // Eksekusi atomik dalam transaksi database dengan pesimis row locking
+        DB::transaction(function () use ($validated, $userId, $keteranganFormat, &$stok) {
+            $stokTerkunci = StokBantuan::lockForUpdate()->findOrFail($validated['stok_bantuan_id']);
+
+            if ($validated['jumlah'] > $stokTerkunci->jumlah) {
+                throw new \Exception("Stok tidak mencukupi untuk dikeluarkan.");
+            }
+
             StokMutasi::create([
-                'stok_bantuan_id' => $stok->id,
+                'stok_bantuan_id' => $stokTerkunci->id,
                 'tipe'            => 'keluar',
                 'jumlah'          => $validated['jumlah'],
-                'keterangan'      => $validated['keterangan'],
+                'keterangan'      => $keteranganFormat,
                 'user_id'         => $userId,
             ]);
 
-            $stok->decrement('jumlah', $validated['jumlah']);
+            $stokTerkunci->decrement('jumlah', $validated['jumlah']);
+            $stok = $stokTerkunci->fresh();
         });
 
-        return redirect()->route('stok-mutasi.index')
-            ->with('success', "Mutasi keluar berhasil dicatat! Saldo {$stok->nama_barang} berkurang -{$validated['jumlah']} {$stok->satuan}.");
+        $pesanSukses = "Mutasi keluar berhasil dicatat! Stok {$stok->nama_barang} berkurang -{$validated['jumlah']} {$stok->satuan} " .
+            "karena [{$validated['tipe_keluar']}]. (Sisa stok gudang saat ini: {$stok->jumlah} {$stok->satuan}).";
+
+        return redirect()->route('stok-mutasi.index')->with('success', $pesanSukses);
     }
 }
