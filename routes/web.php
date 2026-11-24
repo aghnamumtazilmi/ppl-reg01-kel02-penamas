@@ -46,9 +46,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/pengguna/{user}', [UserController::class, 'update'])->name('penamas.pengguna.update');
     Route::delete('/pengguna/{user}', [UserController::class, 'destroy'])->name('penamas.pengguna.destroy');
 
-    // 3. Resource route Data Penerima Bantuan (F-02 - PIC: Zaki)
-    Route::resource('penerima', PenerimaController::class);
-    Route::get('/data-penerima', [PenerimaController::class, 'index'])->name('penamas.penerima.index');
+    // 3. Resource route Data Penerima Bantuan (F-02: PBI-004, PBI-005, PBI-006 - PIC: Zaki)
+    Route::get('/penerima', [PenerimaController::class, 'index'])->name('penamas.penerima.index');
+    Route::get('/data-penerima', fn() => redirect()->route('penamas.penerima.index'));
+    Route::get('/penerima-index', [PenerimaController::class, 'index'])->name('penerima.index');
+    Route::resource('penerima', PenerimaController::class)->except(['index']);
 
     // 4. Resource route Paket Bantuan (F-03 - PIC: Isaf Khiyar Musyaffa)
     Route::resource('paket-bantuan', PaketBantuanController::class)->names([
