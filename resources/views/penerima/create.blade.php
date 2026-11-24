@@ -1,137 +1,130 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendaftaran Penerima Bantuan - PENAMAS</title>
-    <!-- Tailwind CSS CDN agar tampilan langsung rapi dan profesional -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 text-slate-800 min-h-screen py-10">
+@extends('layouts.app')
 
-    <div class="max-w-3xl mx-auto px-4">
-        
-        <!-- Header Proyek -->
-        <div class="bg-emerald-700 text-white rounded-t-2xl p-6 shadow-md">
-            <div class="flex items-center justify-between">
+@section('page-title', 'Pendaftaran Penerima Bantuan')
+@section('page-subtitle', 'Tambah data Keluarga Penerima Manfaat (KPM) baru ke dalam sistem')
+
+@section('page-actions')
+    <a href="{{ route('penamas.penerima.index') }}" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
+        <span>&larr; Kembali ke Daftar</span>
+    </a>
+@endsection
+
+@section('content')
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div class="card-header" style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
+        <h3 class="card-title" style="font-size: 14px; font-weight: 700; color: var(--text-1);">Formulir Pendaftaran Warga KPM Baru</h3>
+        <p class="card-sub" style="font-size: 12px; color: var(--text-2);">Lengkapi data identitas kependudukan penerima bantuan dengan benar.</p>
+    </div>
+
+    <div class="card-body" style="padding: 24px;">
+        @if (isset($errors) && $errors->any())
+            <div class="alert alert-error" style="margin-bottom: 20px;">
+                <svg style="width:16px;height:16px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <div>
-                    <h1 class="text-2xl font-bold">Pendaftaran Penerima Bantuan (KPM) Baru</h1>
-                    <p class="text-emerald-100 text-sm mt-1">PENAMAS — Sistem Informasi Pengelolaan Bantuan Pangan Masyarakat</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Form Container -->
-        <div class="bg-white rounded-b-2xl shadow-md p-8 border border-slate-200 border-t-0">
-            
-            <!-- Notifikasi Sukses -->
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-lg text-emerald-800 text-sm flex items-center justify-between">
-                    <div class="flex items-center space-x-2">
-                        <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="font-medium">{{ session('success') }}</span>
-                    </div>
-                </div>
-            @endif
-
-            <!-- Notifikasi Error Umum (Jika NIK salah format atau duplikat) -->
-            @if ($errors->any())
-                <div class="mb-6 p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-lg text-rose-800 text-sm">
-                    <p class="font-semibold mb-1">Gagal Mendaftarkan Data:</p>
-                    <ul class="list-disc list-inside space-y-1">
+                    <strong style="display:block; margin-bottom: 4px;">Gagal Mendaftarkan Data:</strong>
+                    <ul style="margin: 0; padding-left: 18px; font-size: 12px;">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
-            @endif
+            </div>
+        @endif
 
-            <form action="{{ route('penerima.store') }}" method="POST">
-                @csrf
+        <form action="{{ route('penerima.store') }}" method="POST">
+            @csrf
 
-                <!-- Input NIK (Kriteria Utama: 16 Digit) -->
-                <div class="mb-5">
-                    <label for="nik" class="block text-sm font-semibold text-slate-700 mb-1">
-                        Nomor Induk Kependudukan (NIK) <span class="text-rose-500">*</span>
+            <!-- Input NIK -->
+            <div class="form-group">
+                <label for="nik" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                    Nomor Induk Kependudukan (NIK) <span style="color: #ef4444;">*</span>
+                </label>
+                <input type="text" name="nik" id="nik" maxlength="16" value="{{ old('nik') }}"
+                    placeholder="Contoh: 3302012304950001 (Wajib tepat 16 digit)"
+                    class="form-input" style="width: 100%;">
+                <p style="font-size: 11.5px; color: var(--text-3); margin-top: 4px;">Format NIK wajib tepat 16 digit angka numerik dan belum pernah terdaftar di sistem.</p>
+                @error('nik')
+                    <div class="form-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- Input Nama -->
+            <div class="form-group">
+                <label for="nama" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                    Nama Lengkap Kepala Keluarga / Penerima <span style="color: #ef4444;">*</span>
+                </label>
+                <input type="text" name="nama" id="nama" value="{{ old('nama') }}"
+                    placeholder="Masukkan nama lengkap sesuai KTP"
+                    class="form-input" style="width: 100%;">
+                @error('nama')
+                    <div class="form-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- Input Alamat -->
+            <div class="form-group">
+                <label for="alamat" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                    Alamat Lengkap (RT/RW / Nama Jalan) <span style="color: #ef4444;">*</span>
+                </label>
+                <textarea name="alamat" id="alamat" rows="2"
+                    placeholder="Contoh: RT 02 / RW 03, Jl. Gerilya No. 12"
+                    class="form-textarea" style="width: 100%;">{{ old('alamat') }}</textarea>
+                @error('alamat')
+                    <div class="form-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- Kelurahan & Kecamatan Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label for="kelurahan" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                        Desa / Kelurahan <span style="color: #ef4444;">*</span>
                     </label>
-                    <input type="text" name="nik" id="nik" maxlength="16" value="{{ old('nik') }}"
-                        placeholder="Contoh: 3302012304950001 (Wajib 16 digit)"
-                        class="w-full px-4 py-2.5 rounded-lg border @error('nik') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                    <p class="text-xs text-slate-500 mt-1">Format NIK wajib tepat 16 digit angka dan belum pernah terdaftar.</p>
+                    <input type="text" name="kelurahan" id="kelurahan" value="{{ old('kelurahan') }}"
+                        placeholder="Contoh: Purwokerto Kidul"
+                        class="form-input" style="width: 100%;">
+                    @error('kelurahan')
+                        <div class="form-error">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                <!-- Input Nama -->
-                <div class="mb-5">
-                    <label for="nama" class="block text-sm font-semibold text-slate-700 mb-1">
-                        Nama Lengkap Kepala Keluarga / Penerima <span class="text-rose-500">*</span>
+                <div>
+                    <label for="kecamatan" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                        Kecamatan <span style="color: #ef4444;">*</span>
                     </label>
-                    <input type="text" name="nama" id="nama" value="{{ old('nama') }}"
-                        placeholder="Masukkan nama lengkap sesuai KTP"
-                        class="w-full px-4 py-2.5 rounded-lg border @error('nama') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                    <select name="kecamatan" id="kecamatan" class="form-select" style="width: 100%;">
+                        <option value="">-- Pilih Kecamatan --</option>
+                        @foreach ($daftarKecamatan as $kec)
+                            <option value="{{ $kec }}" {{ old('kecamatan') == $kec ? 'selected' : '' }}>
+                                Kecamatan {{ $kec }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('kecamatan')
+                        <div class="form-error">{{ $message }}</div>
+                    @enderror
                 </div>
+            </div>
 
-                <!-- Input Alamat -->
-                <div class="mb-5">
-                    <label for="alamat" class="block text-sm font-semibold text-slate-700 mb-1">
-                        Alamat Lengkap (RT/RW / Nama Jalan) <span class="text-rose-500">*</span>
-                    </label>
-                    <textarea name="alamat" id="alamat" rows="2"
-                        placeholder="Contoh: RT 02 / RW 03, Jl. Gerilya No. 12"
-                        class="w-full px-4 py-2 rounded-lg border @error('alamat') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">{{ old('alamat') }}</textarea>
-                </div>
+            <!-- Kabupaten -->
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label for="kabupaten" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                    Kabupaten
+                </label>
+                <input type="text" name="kabupaten" id="kabupaten" value="Banyumas" readonly
+                    class="form-input" style="width: 100%; background: var(--surface-2); color: var(--text-3); cursor: not-allowed;">
+            </div>
 
-                <!-- Kelurahan & Kecamatan Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                    <div>
-                        <label for="kelurahan" class="block text-sm font-semibold text-slate-700 mb-1">
-                            Desa / Kelurahan <span class="text-rose-500">*</span>
-                        </label>
-                        <input type="text" name="kelurahan" id="kelurahan" value="{{ old('kelurahan') }}"
-                            placeholder="Contoh: Purwokerto Kidul"
-                            class="w-full px-4 py-2.5 rounded-lg border @error('kelurahan') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                    </div>
-
-                    <div>
-                        <label for="kecamatan" class="block text-sm font-semibold text-slate-700 mb-1">
-                            Kecamatan <span class="text-rose-500">*</span>
-                        </label>
-                        <select name="kecamatan" id="kecamatan"
-                            class="w-full px-4 py-2.5 rounded-lg border @error('kecamatan') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                            <option value="">-- Pilih Kecamatan --</option>
-                            @foreach ($daftarKecamatan as $kec)
-                                <option value="{{ $kec }}" {{ old('kecamatan') == $kec ? 'selected' : '' }}>
-                                    Kecamatan {{ $kec }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Kabupaten -->
-                <div class="mb-8">
-                    <label for="kabupaten" class="block text-sm font-semibold text-slate-700 mb-1">
-                        Kabupaten
-                    </label>
-                    <input type="text" name="kabupaten" id="kabupaten" value="Banyumas" readonly
-                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed">
-                </div>
-
-                <!-- Tombol Aksi -->
-                <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <a href="{{ route('penerima.index') }}" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 transition flex items-center space-x-1">
-                        <span>&larr; Kembali ke Daftar</span>
-                    </a>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm transition flex items-center space-x-2">
-                        <span>Simpan Data Penerima</span>
-                    </button>
-                </div>
-
-            </form>
-        </div>
-
+            <!-- Tombol Aksi -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border);">
+                <a href="{{ route('penamas.penerima.index') }}" class="btn btn-secondary">
+                    <span>&larr; Batal & Kembali</span>
+                </a>
+                <button type="submit" class="btn btn-primary" style="padding: 9px 20px;">
+                    <span>Simpan Data Penerima</span>
+                </button>
+            </div>
+        </form>
     </div>
-
-</body>
-</html>
+</div>
+@endsection

@@ -1,147 +1,138 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubah Data Penerima & Status - PENAMAS</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 text-slate-800 min-h-screen py-10">
+@extends('layouts.app')
 
-    <div class="max-w-3xl mx-auto px-4">
-        
-        <!-- Header Proyek -->
-        <div class="bg-emerald-700 text-white rounded-t-2xl p-6 shadow-md">
-            <div class="flex items-center justify-between">
+@section('page-title', 'Ubah Data Penerima Bantuan')
+@section('page-subtitle', 'Perbarui data alamat dan status keaktifan warga KPM')
+
+@section('page-actions')
+    <a href="{{ route('penamas.penerima.index') }}" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
+        <span>&larr; Kembali ke Daftar</span>
+    </a>
+@endsection
+
+@section('content')
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div class="card-header" style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
+        <h3 class="card-title" style="font-size: 14px; font-weight: 700; color: var(--text-1);">Formulir Pembaruan Data Warga KPM</h3>
+        <p class="card-sub" style="font-size: 12px; color: var(--text-2);">NIK bersifat permanen dan tidak dapat diubah.</p>
+    </div>
+
+    <div class="card-body" style="padding: 24px;">
+        @if (isset($errors) && $errors->any())
+            <div class="alert alert-error" style="margin-bottom: 20px;">
+                <svg style="width:16px;height:16px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <div>
-                    <h1 class="text-2xl font-bold">Ubah Data Alamat & Status Penerima</h1>
-                    <p class="text-emerald-100 text-sm mt-1">PENAMAS — Sistem Informasi Pengelolaan Bantuan Pangan Masyarakat</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Form Edit Container -->
-        <div class="bg-white rounded-b-2xl shadow-md p-8 border border-slate-200 border-t-0">
-            
-            <!-- Notifikasi Error Validasi -->
-            @if ($errors->any())
-                <div class="mb-6 p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-lg text-rose-800 text-sm">
-                    <p class="font-semibold mb-1">Gagal Menyimpan Perubahan:</p>
-                    <ul class="list-disc list-inside space-y-1">
+                    <strong style="display:block; margin-bottom: 4px;">Gagal Menyimpan Perubahan:</strong>
+                    <ul style="margin: 0; padding-left: 18px; font-size: 12px;">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
-            @endif
+            </div>
+        @endif
 
-            <form action="{{ route('penerima.update', $penerima->id) }}" method="POST">
-                @csrf
-                @method('PUT')
+        <form action="{{ route('penerima.update', $penerima->id) }}" method="POST">
+            @csrf
+            @method('PUT')
 
-                <!-- NIK (Terkunci / Readonly karena identitas kependudukan permanen) -->
-                <div class="mb-5">
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">
-                        Nomor Induk Kependudukan (NIK)
+            <!-- NIK (Readonly) -->
+            <div class="form-group">
+                <label class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                    Nomor Induk Kependudukan (NIK)
+                </label>
+                <input type="text" value="{{ $penerima->nik }}" readonly
+                    class="form-input" style="width: 100%; font-family: monospace; background: var(--surface-2); color: var(--text-3); cursor: not-allowed;">
+                <p style="font-size: 11.5px; color: var(--text-3); margin-top: 4px;">NIK bersifat permanen sesuai kependudukan resmi dan tidak dapat diubah.</p>
+            </div>
+
+            <!-- Input Nama -->
+            <div class="form-group">
+                <label for="nama" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                    Nama Lengkap Kepala Keluarga / Penerima <span style="color: #ef4444;">*</span>
+                </label>
+                <input type="text" name="nama" id="nama" value="{{ old('nama', $penerima->nama) }}"
+                    class="form-input" style="width: 100%;">
+                @error('nama')
+                    <div class="form-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- Input Alamat -->
+            <div class="form-group">
+                <label for="alamat" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                    Alamat Lengkap (RT/RW / Nama Jalan) <span style="color: #ef4444;">*</span>
+                </label>
+                <textarea name="alamat" id="alamat" rows="2"
+                    class="form-textarea" style="width: 100%;">{{ old('alamat', $penerima->alamat) }}</textarea>
+                @error('alamat')
+                    <div class="form-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- Kelurahan & Kecamatan Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label for="kelurahan" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                        Desa / Kelurahan <span style="color: #ef4444;">*</span>
                     </label>
-                    <input type="text" value="{{ $penerima->nik }}" readonly
-                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed font-mono">
-                    <p class="text-xs text-slate-400 mt-1">NIK bersifat permanen dan tidak dapat diubah.</p>
+                    <input type="text" name="kelurahan" id="kelurahan" value="{{ old('kelurahan', $penerima->kelurahan) }}"
+                        class="form-input" style="width: 100%;">
+                    @error('kelurahan')
+                        <div class="form-error">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                <!-- Input Nama -->
-                <div class="mb-5">
-                    <label for="nama" class="block text-sm font-semibold text-slate-700 mb-1">
-                        Nama Lengkap Kepala Keluarga / Penerima <span class="text-rose-500">*</span>
+                <div>
+                    <label for="kecamatan" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                        Kecamatan <span style="color: #ef4444;">*</span>
                     </label>
-                    <input type="text" name="nama" id="nama" value="{{ old('nama', $penerima->nama) }}"
-                        class="w-full px-4 py-2.5 rounded-lg border @error('nama') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                </div>
-
-                <!-- [PBI-005] Kriteria 1: Ubah Data Alamat -->
-                <div class="mb-5">
-                    <label for="alamat" class="block text-sm font-semibold text-slate-700 mb-1">
-                        Alamat Lengkap (RT/RW / Nama Jalan) <span class="text-rose-500">*</span>
-                    </label>
-                    <textarea name="alamat" id="alamat" rows="2"
-                        class="w-full px-4 py-2 rounded-lg border @error('alamat') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">{{ old('alamat', $penerima->alamat) }}</textarea>
-                </div>
-
-                <!-- Kelurahan & Kecamatan Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                    <div>
-                        <label for="kelurahan" class="block text-sm font-semibold text-slate-700 mb-1">
-                            Desa / Kelurahan <span class="text-rose-500">*</span>
-                        </label>
-                        <input type="text" name="kelurahan" id="kelurahan" value="{{ old('kelurahan', $penerima->kelurahan) }}"
-                            class="w-full px-4 py-2.5 rounded-lg border @error('kelurahan') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                    </div>
-
-                    <div>
-                        <label for="kecamatan" class="block text-sm font-semibold text-slate-700 mb-1">
-                            Kecamatan <span class="text-rose-500">*</span>
-                        </label>
-                        <select name="kecamatan" id="kecamatan"
-                            class="w-full px-4 py-2.5 rounded-lg border @error('kecamatan') border-rose-400 bg-rose-50 @else border-slate-300 @enderror focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                            @foreach ($daftarKecamatan as $kec)
-                                <option value="{{ $kec }}" {{ old('kecamatan', $penerima->kecamatan) == $kec ? 'selected' : '' }}>
-                                    Kecamatan {{ $kec }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Kabupaten & No HP Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                    <div>
-                        <label for="kabupaten" class="block text-sm font-semibold text-slate-700 mb-1">
-                            Kabupaten / Kota
-                        </label>
-                        <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten', $penerima->kabupaten ?? 'Banyumas') }}"
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                    </div>
-
-                    <div>
-                        <label for="no_hp" class="block text-sm font-semibold text-slate-700 mb-1">
-                            Nomor WhatsApp / HP
-                        </label>
-                        <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp', $penerima->no_hp) }}"
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                    </div>
-                </div>
-
-                <!-- Status Penerima (Aktif / Nonaktif) -->
-                <div class="mb-8">
-                    <label for="status" class="block text-sm font-semibold text-slate-700 mb-1">
-                        Status Penerima <span class="text-rose-500">*</span>
-                    </label>
-                    <select name="status" id="status"
-                        class="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
-                        <option value="aktif" {{ old('status', $penerima->status) === 'aktif' ? 'selected' : '' }}>
-                            Aktif
-                        </option>
-                        <option value="nonaktif" {{ old('status', $penerima->status) === 'nonaktif' ? 'selected' : '' }}>
-                            Nonaktif
-                        </option>
+                    <select name="kecamatan" id="kecamatan" class="form-select" style="width: 100%;">
+                        @foreach ($daftarKecamatan as $kec)
+                            <option value="{{ $kec }}" {{ old('kecamatan', $penerima->kecamatan) == $kec ? 'selected' : '' }}>
+                                Kecamatan {{ $kec }}
+                            </option>
+                        @endforeach
                     </select>
+                    @error('kecamatan')
+                        <div class="form-error">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Kabupaten & Status Penerima Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                <div>
+                    <label for="kabupaten" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                        Kabupaten
+                    </label>
+                    <input type="text" name="kabupaten" id="kabupaten" value="{{ old('kabupaten', $penerima->kabupaten ?? 'Banyumas') }}"
+                        class="form-input" style="width: 100%; background: var(--surface-2); color: var(--text-3); cursor: not-allowed;" readonly>
                 </div>
 
-                <!-- Tombol Aksi -->
-                <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <a href="{{ route('penerima.index') }}" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 transition flex items-center space-x-1">
-                        <span>&larr; Kembali ke Daftar</span>
-                    </a>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm transition">
-                        Simpan Perubahan Data & Status
-                    </button>
+                <div>
+                    <label for="status" class="form-label" style="font-weight: 600; color: var(--text-1); display: block; margin-bottom: 6px;">
+                        Status Penerima <span style="color: #ef4444;">*</span>
+                    </label>
+                    <select name="status" id="status" class="form-select" style="width: 100%;">
+                        <option value="aktif" {{ old('status', $penerima->status) === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="nonaktif" {{ old('status', $penerima->status) === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                    </select>
+                    @error('status')
+                        <div class="form-error">{{ $message }}</div>
+                    @enderror
                 </div>
+            </div>
 
-            </form>
-        </div>
-
+            <!-- Tombol Aksi -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border);">
+                <a href="{{ route('penamas.penerima.index') }}" class="btn btn-secondary">
+                    <span>&larr; Batal & Kembali</span>
+                </a>
+                <button type="submit" class="btn btn-primary" style="padding: 9px 20px;">
+                    <span>Simpan Perubahan Data & Status</span>
+                </button>
+            </div>
+        </form>
     </div>
-
-</body>
-</html>
+</div>
+@endsection
