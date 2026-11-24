@@ -2,15 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PenerimaController;
-use App\Http\Controllers\StokMutasiController;
 use App\Http\Controllers\PenyaluranController;
+use App\Http\Controllers\StokBantuanController;
+use App\Http\Controllers\StokMutasiController;
 
 Route::get('/', function () {
-    return redirect()->route('stok-mutasi.index');
+    return redirect()->route('stok.index');
 });
 
 // Route CRUD Data Penerima Bantuan (F-02: PBI-004, PBI-005, PBI-006)
 Route::resource('penerima', PenerimaController::class);
+
+// Route Modul Master Stok Barang di Gudang (F-04: PBI-010, PBI-011, PBI-012)
+Route::get('/stok', [StokBantuanController::class, 'index'])->name('stok.index');
+Route::get('/stok/create', [StokBantuanController::class, 'create'])->name('stok.create');
+Route::post('/stok', [StokBantuanController::class, 'store'])->name('stok.store');
+Route::delete('/stok/{id}', [StokBantuanController::class, 'destroy'])->name('stok.destroy');
 
 // Route Mutasi Stok Gudang (F-06: PBI-016, PBI-017, PBI-018)
 Route::get('stok-mutasi/keluar/create', [StokMutasiController::class, 'createKeluar'])->name('stok-mutasi.create-keluar');
