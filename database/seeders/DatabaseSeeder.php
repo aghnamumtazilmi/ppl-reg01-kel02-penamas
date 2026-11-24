@@ -113,5 +113,8 @@ class DatabaseSeeder extends Seeder
         StokBantuan::firstOrCreate(['nama_barang' => 'Minyak Goreng'], ['satuan' => 'liter', 'jumlah' => 200]);
         StokBantuan::firstOrCreate(['nama_barang' => 'Gula Pasir'], ['satuan' => 'kg', 'jumlah' => 150]);
         StokBantuan::firstOrCreate(['nama_barang' => 'Tepung Terigu'], ['satuan' => 'kg', 'jumlah' => 100]);
+
+        // Seeder Tambahan Komoditas Lengkap Pangan Bansos (F-06 / PBI-016)
+        $this->call(StokBantuanSeeder::class);
     }
 }
