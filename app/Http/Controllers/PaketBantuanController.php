@@ -37,7 +37,7 @@ class PaketBantuanController extends Controller
         $totalPaket = PaketBantuan::count();
         $totalKomponenItem = KomponenBantuan::count();
 
-        return view('paket.index', compact('paketList', 'search', 'totalPaket', 'totalKomponenItem'));
+        return view('paket-bantuan.index', compact('paketList', 'search', 'totalPaket', 'totalKomponenItem'));
     }
 
     /**
@@ -50,7 +50,7 @@ class PaketBantuanController extends Controller
             ->orderBy('nama_barang')
             ->get();
 
-        return view('paket.create', compact('komoditasList'));
+        return view('paket-bantuan.create', compact('komoditasList'));
     }
 
     /**
@@ -90,28 +90,31 @@ class PaketBantuanController extends Controller
             }
         });
 
-        return redirect()->route('paket.index')
+        return redirect()->route('penamas.paket-bantuan.index')
             ->with('success', "Paket bantuan '{$validated['nama']}' berhasil dibuat beserta komponen barangnya.");
     }
 
     /**
      * Menampilkan formulir edit rincian paket bantuan (PBI-008).
      */
-    public function edit(PaketBantuan $paket): View
+    public function edit(PaketBantuan $paketBantuan): View
     {
-        $paket->load('komponen');
+        $paketBantuan->load('komponen');
 
         $komoditasList = StokBantuan::select('nama_barang', 'satuan')
             ->orderBy('nama_barang')
             ->get();
 
-        return view('paket.edit', compact('paket', 'komoditasList'));
+        return view('paket-bantuan.edit', [
+            'paket' => $paketBantuan,
+            'komoditasList' => $komoditasList,
+        ]);
     }
 
     /**
      * Memperbarui data paket dan daftar komponennya (PBI-008).
      */
-    public function update(Request $request, PaketBantuan $paket): RedirectResponse
+    public function update(Request $request, PaketBantuan $paketBantuan): RedirectResponse
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
@@ -130,17 +133,17 @@ class PaketBantuanController extends Controller
             'komponen.*.jumlah.min' => 'Jumlah barang minimal 0.01.',
         ]);
 
-        DB::transaction(function () use ($validated, $paket) {
-            $paket->update([
+        DB::transaction(function () use ($validated, $paketBantuan) {
+            $paketBantuan->update([
                 'nama' => $validated['nama'],
                 'deskripsi' => $validated['deskripsi'] ?? null,
             ]);
 
             // Hapus komponen lama dan simpan rincian komponen yang diperbarui
-            $paket->komponen()->delete();
+            $paketBantuan->komponen()->delete();
 
             foreach ($validated['komponen'] as $item) {
-                $paket->komponen()->create([
+                $paketBantuan->komponen()->create([
                     'nama_barang' => trim($item['nama_barang']),
                     'satuan' => trim($item['satuan']),
                     'jumlah' => $item['jumlah'],
@@ -148,25 +151,25 @@ class PaketBantuanController extends Controller
             }
         });
 
-        return redirect()->route('paket.index')
-            ->with('success', "Rincian barang paket bantuan '{$paket->nama}' berhasil diperbarui.");
+        return redirect()->route('penamas.paket-bantuan.index')
+            ->with('success', "Rincian barang paket bantuan '{$paketBantuan->nama}' berhasil diperbarui.");
     }
 
     /**
      * Menghapus paket bantuan dengan validasi aturan integritas data (PBI-009).
      */
-    public function destroy(PaketBantuan $paket): RedirectResponse
+    public function destroy(PaketBantuan $paketBantuan): RedirectResponse
     {
         // PBI-009 Aturan Integritas: Cegah penghapusan jika paket sudah pernah dipakai di jadwal distribusi
-        if ($paket->distribusi()->exists()) {
-            return redirect()->route('paket.index')
-                ->with('error', "Paket bantuan '{$paket->nama}' tidak dapat dihapus karena sudah terpakai pada riwayat rencana distribusi warga!");
+        if ($paketBantuan->distribusi()->exists()) {
+            return redirect()->route('penamas.paket-bantuan.index')
+                ->with('error', "Paket bantuan '{$paketBantuan->nama}' tidak dapat dihapus karena sudah terpakai pada riwayat rencana distribusi warga!");
         }
 
-        $nama = $paket->nama;
-        $paket->delete();
+        $nama = $paketBantuan->nama;
+        $paketBantuan->delete();
 
-        return redirect()->route('paket.index')
+        return redirect()->route('penamas.paket-bantuan.index')
             ->with('success', "Paket bantuan '{$nama}' berhasil dihapus dari sistem.");
     }
 }
