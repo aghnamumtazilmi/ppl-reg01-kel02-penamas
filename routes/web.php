@@ -62,14 +62,20 @@ Route::middleware('auth')->group(function () {
     ]);
     Route::resource('paket', PaketBantuanController::class);
 
-    // 5. Resource route Stok Barang di Gudang (F-04 - PIC: Aghna Mumtaz Ilmi)
-    Route::get('/stok', [StokBantuanController::class, 'index'])->name('stok.index');
-    Route::get('/stok-bantuan', [StokBantuanController::class, 'index'])->name('penamas.stok.index');
-    Route::get('/stok/daftar', fn() => redirect()->route('stok.index'));
-    Route::get('/stok/create', [StokBantuanController::class, 'create'])->name('stok.create');
-    Route::get('/stok/tambah', fn() => redirect()->route('stok.create'))->name('penamas.stok.create');
-    Route::post('/stok', [StokBantuanController::class, 'store'])->name('stok.store');
-    Route::delete('/stok/{id}', [StokBantuanController::class, 'destroy'])->name('stok.destroy');
+    // 5. Stok Bantuan (F-04: Kelola Stok Barang di Gudang - Aghna Mumtaz Ilmi)
+    Route::get('/stok', [StokBantuanController::class, 'index'])->name('penamas.stok.index');
+    Route::get('/stok/create', [StokBantuanController::class, 'create'])->name('penamas.stok.create');
+    Route::post('/stok', [StokBantuanController::class, 'store'])->name('penamas.stok.store');
+    Route::delete('/stok/{id}', [StokBantuanController::class, 'destroy'])->name('penamas.stok.destroy');
+
+    // Aliases kompatibilitas rute stok
+    Route::get('/stok-bantuan', fn() => redirect()->route('penamas.stok.index'));
+    Route::get('/stok/daftar', fn() => redirect()->route('penamas.stok.index'));
+    Route::get('/stok/tambah', fn() => redirect()->route('penamas.stok.create'));
+    Route::get('/stok-legacy', [StokBantuanController::class, 'index'])->name('stok.index');
+    Route::get('/stok-legacy/create', [StokBantuanController::class, 'create'])->name('stok.create');
+    Route::post('/stok-legacy', [StokBantuanController::class, 'store'])->name('stok.store');
+    Route::delete('/stok-legacy/{id}', [StokBantuanController::class, 'destroy'])->name('stok.destroy');
 
     // 6. Riwayat Mutasi Stok (F-05 / F-06 - PIC: Helmi Arif Zulfikar)
     Route::get('/stok/mutasi', [StokMutasiController::class, 'index'])->name('penamas.stok.mutasi');

@@ -80,7 +80,7 @@ class StokBantuanController extends Controller
 
         StokBantuan::create($validated);
 
-        return redirect()->route('stok.index')->with('success', 'Komoditas pangan baru berhasil dicatat di gudang!');
+        return redirect()->route('penamas.stok.index')->with('success', 'Komoditas pangan baru berhasil dicatat di gudang!');
     }
 
     /**
@@ -92,18 +92,18 @@ class StokBantuanController extends Controller
 
         // 1. Cek proteksi relasi: apakah barang memiliki riwayat mutasi stok keluar/masuk?
         if ($barang->mutasi()->exists()) {
-            return redirect()->route('stok.index')->with('error', "Komoditas '{$barang->nama_barang}' tidak dapat dihapus karena sudah memiliki riwayat mutasi fisik di gudang!");
+            return redirect()->route('penamas.stok.index')->with('error', "Komoditas '{$barang->nama_barang}' tidak dapat dihapus karena sudah memiliki riwayat mutasi fisik di gudang!");
         }
 
         // 2. Cek proteksi relasi: apakah barang terdaftar sebagai komponen paket bantuan aktif?
         if (KomponenBantuan::where('nama_barang', $barang->nama_barang)->exists()) {
-            return redirect()->route('stok.index')->with('error', "Komoditas '{$barang->nama_barang}' tidak dapat dihapus karena sudah terdaftar sebagai komponen paket bantuan!");
+            return redirect()->route('penamas.stok.index')->with('error', "Komoditas '{$barang->nama_barang}' tidak dapat dihapus karena sudah terdaftar sebagai komponen paket bantuan!");
         }
 
         // 3. Jika aman dari relasi data lain, hapus komoditas
         $namaBarang = $barang->nama_barang;
         $barang->delete();
 
-        return redirect()->route('stok.index')->with('success', "Komoditas '{$namaBarang}' berhasil dihapus dari persediaan gudang.");
+        return redirect()->route('penamas.stok.index')->with('success', "Komoditas '{$namaBarang}' berhasil dihapus dari persediaan gudang.");
     }
 }
