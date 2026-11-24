@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PenerimaController;
 use App\Http\Controllers\PaketBantuanController;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 | Web Routes - PENAMAS (Sprint 1 Integration)
 |--------------------------------------------------------------------------
 | Template antarmuka terpadu Kravio UI, autentikasi sesi, dan integrasi
-| modul seluruh anggota kelompok Sprint 1.
+| seluruh modul anggota kelompok Sprint 1.
 |*/
 
 // Autentikasi Pengguna (Login & Logout)
@@ -31,8 +32,9 @@ Route::get('/', function () {
 // Seluruh Menu Aplikasi (Dilindungi Autentikasi)
 Route::middleware('auth')->group(function () {
 
-    // 1. Dashboard
-    Route::get('/dashboard', fn() => view('dashboard'))->name('penamas.dashboard');
+    // 1. Dashboard (PIC: Edwin Salman Hakim)
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('penamas.dashboard');
+    Route::get('/ringkasan', [DashboardController::class, 'index'])->name('dashboard');
 
     // 2. Resource route utama fitur Kelola Pengguna (F-01 - PIC: Riyan Saefuloh)
     Route::resource('users', UserController::class);
