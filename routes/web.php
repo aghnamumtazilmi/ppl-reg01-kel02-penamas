@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PenerimaController;
 use App\Http\Controllers\PaketBantuanController;
+use App\Http\Controllers\StokBantuanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -55,8 +56,12 @@ Route::middleware('auth')->group(function () {
     ]);
     Route::resource('paket', PaketBantuanController::class); // Alias link singkat
 
-    // 5. Stok Bantuan (Placeholder anggota kelompok)
-    Route::get('/stok', fn() => view('stok.index'))->name('penamas.stok.index');
+    // 5. Resource route Stok Barang di Gudang (F-04 - PBI-010, PBI-011, PBI-012)
+    Route::get('/stok', [StokBantuanController::class, 'index'])->name('stok.index');
+    Route::get('/stok-bantuan', [StokBantuanController::class, 'index'])->name('penamas.stok.index');
+    Route::get('/stok/create', [StokBantuanController::class, 'create'])->name('stok.create');
+    Route::post('/stok', [StokBantuanController::class, 'store'])->name('stok.store');
+    Route::delete('/stok/{id}', [StokBantuanController::class, 'destroy'])->name('stok.destroy');
 
     // 6. Riwayat Mutasi Stok (Placeholder anggota kelompok)
     Route::get('/stok/mutasi', fn() => view('stok.mutasi'))->name('penamas.stok.mutasi');
