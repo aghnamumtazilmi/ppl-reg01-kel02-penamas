@@ -23,8 +23,8 @@
                     📄
                 </div>
                 <div>
-                    <div style="font-size: 13px; font-weight: 600; color: var(--text-1);">Punya banyak data warga penerima?</div>
-                    <div style="font-size: 11.5px; color: var(--text-2);">Unggah langsung berkas Excel (.xlsx) atau CSV tanpa harus mengetik satu per satu.</div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--text-1);">Pendaftaran Massal Data Penerima</div>
+                    <div style="font-size: 11.5px; color: var(--text-2);">Tersedia opsi unggah berkas Excel (.xlsx) atau CSV jika data yang ingin dimasukkan berjumlah banyak.</div>
                 </div>
             </div>
             <a href="{{ route('penamas.penerima.import.form') }}" class="btn btn-secondary" style="font-size: 12px; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">

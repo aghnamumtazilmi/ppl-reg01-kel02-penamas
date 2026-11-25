@@ -48,8 +48,8 @@
             <!-- Unduh Template Panduan -->
             <div style="background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
                 <div>
-                    <div style="font-size: 13px; font-weight: 600; color: var(--text-1);">Belum punya formatnya?</div>
-                    <div style="font-size: 11.5px; color: var(--text-2);">Gunakan template resmi agar susunan kolom sesuai dengan sistem.</div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--text-1);">Template Standar Format Penerima</div>
+                    <div style="font-size: 11.5px; color: var(--text-2);">Gunakan template resmi ini agar susunan kolom sesuai dengan pembacaan sistem.</div>
                 </div>
                 <a href="{{ route('penamas.penerima.import.template') }}" class="btn btn-secondary" style="font-size: 12px; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 14px; height: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
