@@ -112,14 +112,25 @@
             </thead>
             <tbody>
                 @forelse ($users as $user)
+                @php
+                    $currentId = auth()->id() ?? ($authUser->id ?? null);
+                    $currentEmail = auth()->user()?->email ?? ($authUser->email ?? null);
+                    $currentName = auth()->user()?->name ?? ($authUser->name ?? null);
+                    
+                    $isSelf = ($currentId && $user->id === $currentId) 
+                           || ($currentEmail && $user->email === $currentEmail) 
+                           || ($currentName && $user->name === $currentName);
+                    
+                    $isPimpinan = ($user->role === 'pimpinan');
+                @endphp
                 <tr>
                     <td>
                         <div class="flex items-center gap-3">
                             <div class="user-ava">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                             <div>
-                                <div style="font-weight: 600; color: var(--text-1); font-size: 13px;">
+                                <div style="font-weight: 600; color: var(--text-1); font-size: 13px; display: flex; align-items: center;">
                                     {{ $user->name }}
-                                    @if(auth()->id() === $user->id)
+                                    @if($isSelf)
                                         <span class="badge badge-aktif" style="margin-left: 6px; font-size: 10px;">Anda</span>
                                     @endif
                                 </div>
@@ -139,15 +150,19 @@
                                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                 <span>Edit</span>
                             </a>
-                            @if($user->id !== auth()->id())
-                            <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun pengguna {{ $user->name }}?')" style="margin: 0; display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-xs">
-                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    <span>Hapus</span>
-                                </button>
-                            </form>
+                            @if($isSelf)
+                                <span class="badge" style="background: var(--surface-2); color: var(--text-3); border: 1px solid var(--border); font-size: 11px; padding: 4px 8px;" title="Akun Anda yang sedang aktif tidak dapat dihapus">Akun Anda</span>
+                            @elseif($isPimpinan)
+                                <span class="badge" style="background: var(--tag-amber-bg); color: var(--tag-amber-fg); border: 1px solid var(--tag-amber-border); font-size: 11px; padding: 4px 8px;" title="Akun Pimpinan dilindungi sistem dan tidak dapat dihapus">Terproteksi</span>
+                            @else
+                                <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun pengguna {{ $user->name }}?')" style="margin: 0; display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-xs">
+                                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        <span>Hapus</span>
+                                    </button>
+                                </form>
                             @endif
                         </div>
                     </td>

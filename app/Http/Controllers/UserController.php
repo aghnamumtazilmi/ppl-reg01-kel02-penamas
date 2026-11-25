@@ -179,17 +179,30 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user): RedirectResponse|JsonResponse
     {
-        // Proteksi: cegah pengguna menghapus akunnya sendiri yang sedang aktif login
+        // 1. Proteksi: cegah pengguna menghapus akunnya sendiri yang sedang aktif login
         if (auth()->check() && auth()->id() === $user->id) {
+            $msg = 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif digunakan.';
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif digunakan.',
+                    'message' => $msg,
                 ], 403);
             }
 
-            return redirect()->route('users.index')
-                ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif digunakan.');
+            return redirect()->route('users.index')->with('error', $msg);
+        }
+
+        // 2. Proteksi: akun Pimpinan dilindungi oleh sistem dan tidak dapat dihapus
+        if ($user->role === 'pimpinan') {
+            $msg = 'Akun Pimpinan dilindungi oleh sistem dan tidak dapat dihapus.';
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $msg,
+                ], 403);
+            }
+
+            return redirect()->route('users.index')->with('error', $msg);
         }
 
         $userName = $user->name;
