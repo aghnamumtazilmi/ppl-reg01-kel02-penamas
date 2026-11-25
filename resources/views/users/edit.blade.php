@@ -23,7 +23,21 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('users.update', $user) }}">
+    @if ($errors->any())
+        <div class="alert alert-error" style="margin-bottom: 20px;">
+            <svg style="width:16px;height:16px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div>
+                <strong style="display:block; margin-bottom: 4px;">Peringatan Perubahan Akun:</strong>
+                <ul style="margin: 0; padding-left: 18px; font-size: 12px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('penamas.pengguna.update', $user) }}">
         @csrf
         @method('PUT')
 
