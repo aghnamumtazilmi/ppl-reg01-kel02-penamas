@@ -12,11 +12,26 @@
 @section('content')
 <div class="card" style="max-width: 800px; margin: 0 auto;">
     <div class="card-header" style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
-        <h3 class="card-title" style="font-size: 14px; font-weight: 700; color: var(--text-1);">Formulir Pendaftaran Warga KPM Baru</h3>
-        <p class="card-sub" style="font-size: 12px; color: var(--text-2);">Lengkapi data identitas kependudukan penerima bantuan dengan benar.</p>
+        <h3 class="card-title" style="font-size: 14px; font-weight: 700; color: var(--text-1); margin: 0;">Formulir Pendaftaran Warga KPM Baru</h3>
     </div>
 
     <div class="card-body" style="padding: 24px;">
+        <!-- Pilihan Import Massal via Berkas Excel / CSV -->
+        <div style="background: var(--surface-2); border: 1px dashed var(--border); border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(16, 185, 129, 0.12); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+                    📄
+                </div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--text-1);">Pendaftaran Massal Data Penerima</div>
+                    <div style="font-size: 11.5px; color: var(--text-2);">Tersedia opsi unggah berkas Excel (.xlsx) atau CSV jika data yang ingin dimasukkan berjumlah banyak.</div>
+                </div>
+            </div>
+            <a href="{{ route('penamas.penerima.import.form') }}" class="btn btn-secondary" style="font-size: 12px; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 14px; height: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span>Unggah File Excel / CSV</span>
+            </a>
+        </div>
         @if (isset($errors) && $errors->any())
             <div class="alert alert-error" style="margin-bottom: 20px;">
                 <svg style="width:16px;height:16px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
