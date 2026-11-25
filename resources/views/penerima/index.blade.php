@@ -113,13 +113,12 @@
                                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 12px; height: 12px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                     <span>Ubah</span>
                                 </a>
-                                <form action="{{ route('penerima.destroy', $warga->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data penerima {{ $warga->nama }}?');" style="margin: 0;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-xs" title="Hapus Data">
-                                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 12px; height: 12px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                    </button>
-                                </form>
+                                <button type="button" 
+                                        onclick="konfirmasiHapusPenerima('{{ route('penerima.destroy', $warga->id) }}', '{{ addslashes($warga->nama) }}')" 
+                                        class="btn btn-danger btn-xs" 
+                                        title="Hapus Data">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 12px; height: 12px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -140,4 +139,46 @@
         </div>
     @endif
 </div>
+
+<!-- Modal Konfirmasi Hapus Data Penerima -->
+<div id="modalHapusPenerima" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 16px;">
+    <div class="card" style="max-width: 420px; width: 100%; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); overflow: hidden;">
+        <div style="padding: 24px 24px 20px; text-align: center;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--tag-red-bg); color: var(--tag-red-fg); border: 1px solid var(--tag-red-border); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px;">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </div>
+            <h3 style="font-size: 15px; font-weight: 700; color: var(--text-1); margin: 0 0 8px;">Konfirmasi Hapus Penerima</h3>
+            <p style="font-size: 12.5px; color: var(--text-2); margin: 0; line-height: 1.5;">
+                Apakah Anda yakin ingin menghapus data penerima <strong id="modalPenerimaNama" style="color: var(--text-1);"></strong>? Tindakan ini bersifat permanen.
+            </p>
+        </div>
+        <div style="background: var(--surface-2); padding: 14px 20px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border);">
+            <button type="button" onclick="tutupModalHapusPenerima()" class="btn btn-secondary" style="padding: 7px 16px;">
+                Batal
+            </button>
+            <form id="formHapusPenerima" method="POST" style="margin: 0;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger" style="padding: 7px 16px; display: inline-flex; align-items: center; gap: 6px;">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 14px; height: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    <span>Hapus Data</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function konfirmasiHapusPenerima(url, nama) {
+    document.getElementById('formHapusPenerima').action = url;
+    document.getElementById('modalPenerimaNama').innerText = nama;
+    document.getElementById('modalHapusPenerima').style.display = 'flex';
+}
+function tutupModalHapusPenerima() {
+    document.getElementById('modalHapusPenerima').style.display = 'none';
+}
+document.getElementById('modalHapusPenerima')?.addEventListener('click', function(e) {
+    if (e.target === this) tutupModalHapusPenerima();
+});
+</script>
 @endsection
