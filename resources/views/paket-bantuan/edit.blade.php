@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('page-title', 'Ubah Rincian Paket Bantuan')
-@section('page-subtitle', 'Perbarui nama, deskripsi, dan rincian komponen komoditas barang (PBI-008)')
+@section('page-subtitle', 'Perbarui nama, deskripsi, dan rincian komponen komoditas barang')
 
 @section('page-actions')
     <a href="{{ route('penamas.paket-bantuan.index') }}" class="btn btn-secondary btn-sm">
@@ -61,11 +61,11 @@
         @endforeach
     </datalist>
 
-    <!-- Rincian Komponen Barang Dinamis (PBI-008) -->
+    <!-- Rincian Komponen Barang Dinamis -->
     <div class="card mb-4">
         <div class="card-header">
             <div>
-                <div class="card-title">Rincian Komponen Barang (PBI-008)</div>
+                <div class="card-title">Rincian Komponen Barang</div>
                 <div class="card-sub">Sesuaikan takaran, ubah satuan, atau tambah/hapus baris barang komoditas</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="tambahBaris()">
