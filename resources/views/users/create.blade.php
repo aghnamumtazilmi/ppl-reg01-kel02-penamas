@@ -17,7 +17,7 @@
         <p style="font-size: 12px; color: var(--text-3); margin-top: 3px;">Lengkapi data akun untuk memberikan hak akses ke dalam sistem.</p>
     </div>
 
-    <form method="POST" action="{{ route('users.store') }}">
+    <form method="POST" action="{{ route('users.store') }}" autocomplete="off">
         @csrf
 
         <!-- Nama Lengkap -->
@@ -31,6 +31,7 @@
                    value="{{ old('name') }}" 
                    placeholder="Contoh: Emanuel" 
                    required
+                   autocomplete="off"
                    class="form-input">
             @error('name')
                 <div class="form-error">{{ $message }}</div>
@@ -46,8 +47,9 @@
                    id="email" 
                    name="email" 
                    value="{{ old('email') }}" 
-                   placeholder="nama@penamas.test" 
+                   placeholder="Contoh: petugas@penamas.test" 
                    required
+                   autocomplete="off"
                    class="form-input">
             @error('email')
                 <div class="form-error">{{ $message }}</div>
@@ -80,6 +82,7 @@
                    name="password" 
                    placeholder="Minimal 8 karakter" 
                    required
+                   autocomplete="new-password"
                    class="form-input">
             @error('password')
                 <div class="form-error">{{ $message }}</div>
@@ -96,6 +99,7 @@
                    name="password_confirmation" 
                    placeholder="Ketik ulang kata sandi" 
                    required
+                   autocomplete="new-password"
                    class="form-input">
         </div>
 

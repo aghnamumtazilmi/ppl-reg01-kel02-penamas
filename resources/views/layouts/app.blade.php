@@ -625,6 +625,16 @@
             outline: none;
             border-color: var(--text-1);
         }
+        /* Mencegah browser autofill mengubah background menjadi putih di dark mode */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px var(--surface) inset !important;
+            -webkit-text-fill-color: var(--text-1) !important;
+            caret-color: var(--text-1) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
         .form-textarea { min-height: 80px; resize: vertical; }
         .form-error { font-size: 11.5px; color: #ef4444; margin-top: 4px; }
 
