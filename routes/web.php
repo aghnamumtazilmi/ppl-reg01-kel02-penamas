@@ -50,6 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/penerima', [PenerimaController::class, 'index'])->name('penamas.penerima.index');
     Route::get('/data-penerima', fn() => redirect()->route('penamas.penerima.index'));
     Route::get('/penerima-index', [PenerimaController::class, 'index'])->name('penerima.index');
+    Route::get('/penerima/import', [PenerimaController::class, 'importForm'])->name('penamas.penerima.import.form');
+    Route::get('/penerima/import/template', [PenerimaController::class, 'downloadTemplate'])->name('penamas.penerima.import.template');
+    Route::post('/penerima/import', [PenerimaController::class, 'import'])->name('penamas.penerima.import');
     Route::resource('penerima', PenerimaController::class)->except(['index']);
 
     // 4. Resource route Paket Bantuan (F-03 - PIC: Isaf Khiyar Musyaffa)

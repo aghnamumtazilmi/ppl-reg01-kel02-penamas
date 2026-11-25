@@ -4,10 +4,16 @@
 @section('page-subtitle', 'Daftar Keluarga Penerima Manfaat (KPM) Kabupaten Banyumas')
 
 @section('page-actions')
-    <a href="{{ route('penerima.create') }}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 14px; height: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        <span>Tambah Penerima Baru</span>
-    </a>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <a href="{{ route('penamas.penerima.import.form') }}" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 14px; height: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            <span>Import Excel / CSV</span>
+        </a>
+        <a href="{{ route('penerima.create') }}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 14px; height: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Tambah Penerima Baru</span>
+        </a>
+    </div>
 @endsection
 
 @section('content')
