@@ -8,12 +8,12 @@
         <a href="{{ route('stok-mutasi.create') }}" 
            style="display:inline-flex; align-items:center; gap:6px; background:#18181b; color:#ffffff; font-weight:600; font-size:12.5px; padding:9px 16px; border-radius:8px; text-decoration:none; transition:all .15s ease; border:1px solid #18181b;">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:14px; height:14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-            <span>+ Catat Mutasi Masuk</span>
+            <span>Catat Mutasi Masuk</span>
         </a>
         <a href="{{ route('stok-mutasi.create-keluar') }}" 
            style="display:inline-flex; align-items:center; gap:6px; background:#ffffff; color:#dc2626; font-weight:600; font-size:12.5px; padding:9px 16px; border-radius:8px; text-decoration:none; transition:all .15s ease; border:1px solid #fecaca;">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:14px; height:14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
-            <span>&minus; Catat Keluar Manual</span>
+            <span>Catat Keluar Manual</span>
         </a>
     </div>
 @endsection
@@ -34,10 +34,10 @@
     <!-- ── 4 KOTAK RINGKASAN STATISTIK (Sesuai Desain Screenshot) ── -->
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
         
-        <!-- Card 1: Transaksi Masuk -->
+        <!-- Card 1: Mutasi Masuk -->
         <div style="background:#ffffff; border:1px solid #e4e4e7; border-radius:12px; padding:18px 22px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:13px; font-weight:500; color:#71717a;">Transaksi Masuk</span>
+                <span style="font-size:13px; font-weight:500; color:#71717a;">Mutasi Masuk</span>
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:16px; height:16px; color:#a1a1aa;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
             </div>
             <div style="font-size:30px; font-weight:800; color:#18181b; margin:10px 0 12px; letter-spacing:-0.02em;">
@@ -54,7 +54,7 @@
         <!-- Card 2: Volume Total Masuk -->
         <div style="background:#ffffff; border:1px solid #e4e4e7; border-radius:12px; padding:18px 22px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:13px; font-weight:500; color:#71717a;">Volume Total Masuk</span>
+                <span style="font-size:13px; font-weight:500; color:#71717a;">Total Volume Masuk</span>
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:16px; height:16px; color:#a1a1aa;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v16m8-8H4"/></svg>
             </div>
             <div style="font-size:30px; font-weight:800; color:#18181b; margin:10px 0 12px; letter-spacing:-0.02em;">
@@ -68,27 +68,27 @@
             </div>
         </div>
 
-        <!-- Card 3: Transaksi Keluar -->
+        <!-- Card 3: Mutasi Keluar -->
         <div style="background:#ffffff; border:1px solid #e4e4e7; border-radius:12px; padding:18px 22px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:13px; font-weight:500; color:#71717a;">Transaksi Keluar</span>
+                <span style="font-size:13px; font-weight:500; color:#71717a;">Mutasi Keluar</span>
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:16px; height:16px; color:#a1a1aa;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
             </div>
             <div style="font-size:30px; font-weight:800; color:#18181b; margin:10px 0 12px; letter-spacing:-0.02em;">
                 {{ number_format($stats['total_transaksi_keluar']) }}
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; font-size:11.5px;">
-                <span style="color:#a1a1aa;">Rusak, susut &amp; bencana</span>
+                <span style="color:#a1a1aa;">Pengeluaran logistik</span>
                 <span style="background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; border-radius:6px; padding:2px 10px; font-weight:600; font-size:11px;">
                     Keluar
                 </span>
             </div>
         </div>
 
-        <!-- Card 4: Komoditas Gudang -->
+        <!-- Card 4: Komoditas Pangan -->
         <div style="background:#ffffff; border:1px solid #e4e4e7; border-radius:12px; padding:18px 22px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:13px; font-weight:500; color:#71717a;">Komoditas Terdaftar</span>
+                <span style="font-size:13px; font-weight:500; color:#71717a;">Komoditas Pangan</span>
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:16px; height:16px; color:#a1a1aa;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
             </div>
             <div style="font-size:30px; font-weight:800; color:#18181b; margin:10px 0 12px; letter-spacing:-0.02em;">
@@ -190,11 +190,11 @@
                 <thead>
                     <tr style="border-bottom:1px solid #e4e4e7; background:#ffffff;">
                         <th style="padding:14px 22px; font-size:11px; font-weight:700; color:#71717a; text-transform:uppercase; letter-spacing:0.05em;">KOMODITAS PANGAN</th>
-                        <th style="padding:14px 22px; font-size:11px; font-weight:700; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; text-align:center;">HAK AKSES / JENIS</th>
+                        <th style="padding:14px 22px; font-size:11px; font-weight:700; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; text-align:center;">JENIS MUTASI</th>
                         <th style="padding:14px 22px; font-size:11px; font-weight:700; color:#71717a; text-transform:uppercase; letter-spacing:0.05em; text-align:right;">VOLUME / SALDO</th>
                         <th style="padding:14px 22px; font-size:11px; font-weight:700; color:#71717a; text-transform:uppercase; letter-spacing:0.05em;">KETERANGAN &amp; ALASAN</th>
                         <th style="padding:14px 22px; font-size:11px; font-weight:700; color:#71717a; text-transform:uppercase; letter-spacing:0.05em;">PETUGAS PENGINPUT</th>
-                        <th style="padding:14px 22px; font-size:11px; font-weight:700; color:#71717a; text-transform:uppercase; letter-spacing:0.05em;">TERDAFTAR PADA</th>
+                        <th style="padding:14px 22px; font-size:11px; font-weight:700; color:#71717a; text-transform:uppercase; letter-spacing:0.05em;">WAKTU PENCATATAN</th>
                     </tr>
                 </thead>
                 <tbody>
