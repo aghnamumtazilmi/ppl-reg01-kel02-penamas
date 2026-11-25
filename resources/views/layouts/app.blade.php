@@ -88,6 +88,17 @@
             --tag-gray-border: #3f3f46;
         }
 
+        html {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg);
@@ -99,6 +110,7 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             transition: background .15s ease, color .15s ease;
+            overflow-x: hidden;
         }
 
         /* ── Sidebar (220px) ── */
@@ -701,12 +713,46 @@
         .p-6 { padding: 20px; }
         .text-right { text-align: right; }
         .w-full { width: 100%; }
+
+        /* ── Pagination Styling ── */
+        nav[role="navigation"] {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 12px;
+            color: var(--text-2);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        nav[role="navigation"] svg { width: 14px; height: 14px; }
+        nav[role="navigation"] a, nav[role="navigation"] span {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-1);
+            text-decoration: none;
+            font-size: 12px;
+        }
+        nav[role="navigation"] a:hover {
+            background: var(--active-bg);
+            border-color: var(--active-border);
+        }
+        nav[role="navigation"] span[aria-current="page"] {
+            background: var(--text-1);
+            color: var(--accent-fg);
+            border-color: var(--text-1);
+            font-weight: 700;
+        }
     </style>
     @stack('styles')
 </head>
 <body>
     @php
-        $authUser = Auth::user() ?? new \App\Models\User(['name' => 'Riyan Saefuloh', 'role' => 'admin']);
+        $authUser = Auth::user() ?? new \App\Models\User(['name' => 'Emanuel', 'role' => 'admin']);
     @endphp
     <!-- Sidebar (220px) -->
     <aside class="sidebar">
@@ -734,19 +780,19 @@
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                 <span>Pengguna</span>
             </a>
-            <a href="{{ route('penamas.penerima.index') }}" class="nav-item {{ request()->routeIs('penamas.penerima.*') ? 'active' : '' }}">
+            <a href="{{ route('penamas.penerima.index') }}" class="nav-item {{ request()->routeIs('penamas.penerima.*') || request()->routeIs('penerima.*') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                 <span>Data Penerima</span>
             </a>
-            <a href="{{ route('penamas.paket-bantuan.index') }}" class="nav-item {{ request()->routeIs('penamas.paket-bantuan.*') ? 'active' : '' }}">
+            <a href="{{ route('penamas.paket-bantuan.index') }}" class="nav-item {{ request()->routeIs('penamas.paket-bantuan.*') || request()->routeIs('paket.*') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 <span>Paket Bantuan</span>
             </a>
-            <a href="{{ route('penamas.stok.index') }}" class="nav-item {{ request()->routeIs('penamas.stok.index') || request()->routeIs('penamas.stok.create') ? 'active' : '' }}">
+            <a href="{{ route('penamas.stok.index') }}" class="nav-item {{ (request()->routeIs('penamas.stok.*') || request()->routeIs('stok.*')) && !request()->routeIs('penamas.stok.mutasi*') && !request()->routeIs('stok-mutasi.*') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                 <span>Stok Bantuan</span>
             </a>
-            <a href="{{ route('penamas.stok.mutasi') }}" class="nav-item {{ request()->routeIs('penamas.stok.mutasi*') ? 'active' : '' }}">
+            <a href="{{ route('penamas.stok.mutasi') }}" class="nav-item {{ request()->routeIs('penamas.stok.mutasi*') || request()->routeIs('stok-mutasi.*') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <span>Riwayat Mutasi</span>
             </a>
@@ -757,29 +803,12 @@
             <a href="{{ route('penamas.distribusi.index') }}" class="nav-item {{ request()->routeIs('penamas.distribusi.*') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                 <span>Rencana Distribusi</span>
-                @php $pendingCount = \Illuminate\Support\Facades\Schema::hasTable('distribusi') ? \App\Models\Distribusi::where('status', 'diajukan')->count() : 0; @endphp
-                @if($pendingCount > 0)
-                    <span class="nav-badge">{{ $pendingCount }}</span>
-                @endif
             </a>
             @endif
 
             <a href="{{ route('penamas.penyaluran.index') }}" class="nav-item {{ request()->routeIs('penamas.penyaluran.*') ? 'active' : '' }}">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                 <span>{{ $authUser->isPetugas() ? 'Tugas Penyaluran' : 'Penyaluran Bantuan' }}</span>
-                @php
-                    $myTaskCount = 0;
-                    if (\Illuminate\Support\Facades\Schema::hasTable('distribusi')) {
-                        if ($authUser->isPetugas() && $authUser->exists) {
-                            $myTaskCount = $authUser->distribusiDitugaskan()->where('status', 'disetujui')->count();
-                        } else {
-                            $myTaskCount = \App\Models\Distribusi::where('status', 'disetujui')->count();
-                        }
-                    }
-                @endphp
-                @if($myTaskCount > 0)
-                    <span class="nav-badge" style="background: #15803d;">{{ $myTaskCount }}</span>
-                @endif
             </a>
 
             @if($authUser->canManage())

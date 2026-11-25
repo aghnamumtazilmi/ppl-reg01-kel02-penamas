@@ -7,6 +7,7 @@ use App\Models\PaketBantuan;
 use App\Models\KomponenBantuan;
 use App\Models\StokBantuan;
 use App\Models\Penerima;
+use App\Models\Distribusi;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -113,5 +114,78 @@ class DatabaseSeeder extends Seeder
         StokBantuan::firstOrCreate(['nama_barang' => 'Minyak Goreng'], ['satuan' => 'liter', 'jumlah' => 200]);
         StokBantuan::firstOrCreate(['nama_barang' => 'Gula Pasir'], ['satuan' => 'kg', 'jumlah' => 150]);
         StokBantuan::firstOrCreate(['nama_barang' => 'Tepung Terigu'], ['satuan' => 'kg', 'jumlah' => 100]);
+        StokBantuan::firstOrCreate(['nama_barang' => 'Garam Beryodium'], ['satuan' => 'bungkus', 'jumlah' => 8]); // Contoh stok menipis (<=10)
+
+        // ─── Sample Rencana Distribusi (Untuk Dashboard & Penyaluran) ───
+        $admin = User::where('role', 'admin')->first();
+        $pimpinan = User::where('role', 'pimpinan')->first();
+
+        // 1. Rencana status Diajukan (PBI-014: Menunggu Persetujuan Pimpinan)
+        Distribusi::firstOrCreate(
+            ['kode' => 'DIST-20261124-0001'],
+            [
+                'periode' => 'November 2026',
+                'wilayah' => 'Purwokerto Selatan',
+                'paket_bantuan_id' => $paket1->id,
+                'jumlah_penerima' => 35,
+                'status' => 'diajukan',
+                'catatan' => 'Bantuan sembako tahap awal wilayah Purwokerto Selatan',
+                'dibuat_oleh' => $admin?->id,
+                'tanggal_pengajuan' => now()->subHours(2),
+            ]
+        );
+
+        // 2. Rencana status Disalurkan (PBI-015: Aktivitas Selesai)
+        Distribusi::firstOrCreate(
+            ['kode' => 'DIST-20261120-0002'],
+            [
+                'periode' => 'November 2026',
+                'wilayah' => 'Sokaraja',
+                'paket_bantuan_id' => $paket1->id,
+                'jumlah_penerima' => 50,
+                'status' => 'disalurkan',
+                'catatan' => 'Penyaluran sembako darurat Sokaraja',
+                'dibuat_oleh' => $admin?->id,
+                'disetujui_oleh' => $pimpinan?->id,
+                'tanggal_pengajuan' => now()->subDays(4),
+                'tanggal_persetujuan' => now()->subDays(3),
+            ]
+        );
+
+        // 3. Rencana status Disetujui (PBI-015: Siap Disalurkan)
+        Distribusi::firstOrCreate(
+            ['kode' => 'DIST-20261122-0003'],
+            [
+                'periode' => 'November 2026',
+                'wilayah' => 'Purwokerto Timur',
+                'paket_bantuan_id' => $paket2->id,
+                'jumlah_penerima' => 20,
+                'status' => 'disetujui',
+                'catatan' => 'Penyaluran paket B untuk lansia dan keluarga prasejahtera',
+                'dibuat_oleh' => $admin?->id,
+                'disetujui_oleh' => $pimpinan?->id,
+                'tanggal_pengajuan' => now()->subDays(2),
+                'tanggal_persetujuan' => now()->subDays(1),
+            ]
+        );
+
+        // 4. Rencana status Draft
+        Distribusi::firstOrCreate(
+            ['kode' => 'DIST-20261124-0004'],
+            [
+                'periode' => 'Desember 2026',
+                'wilayah' => 'Banyumas',
+                'paket_bantuan_id' => $paket1->id,
+                'jumlah_penerima' => 45,
+                'status' => 'draft',
+                'catatan' => 'Draf alokasi bantuan akhir tahun',
+                'dibuat_oleh' => $admin?->id,
+            ]
+        );
+
+        // Seeder Tambahan Komoditas Lengkap Pangan Bansos (F-06 / PBI-016)
+        if (class_exists(StokBantuanSeeder::class)) {
+            $this->call(StokBantuanSeeder::class);
+        }
     }
 }
