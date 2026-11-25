@@ -752,7 +752,7 @@
 </head>
 <body>
     @php
-        $authUser = Auth::user() ?? new \App\Models\User(['name' => 'Riyan Saefuloh', 'role' => 'admin']);
+        $authUser = Auth::user() ?? new \App\Models\User(['name' => 'Emanuel', 'role' => 'admin']);
     @endphp
     <!-- Sidebar (220px) -->
     <aside class="sidebar">

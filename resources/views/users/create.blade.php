@@ -29,7 +29,7 @@
                    id="name" 
                    name="name" 
                    value="{{ old('name') }}" 
-                   placeholder="Contoh: Riyan Saefuloh" 
+                   placeholder="Contoh: Emanuel" 
                    required
                    class="form-input">
             @error('name')
