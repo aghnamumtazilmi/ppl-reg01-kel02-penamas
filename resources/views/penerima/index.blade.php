@@ -14,20 +14,20 @@
 <!-- Filter Pencarian & Wilayah Kecamatan -->
 <div class="card" style="margin-bottom: 20px; padding: 16px;">
     <form action="{{ route('penamas.penerima.index') }}" method="GET">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) 130px; gap: 12px; align-items: flex-end;">
+        <div style="display: grid; grid-template-columns: 1.8fr 1.4fr 1.2fr auto; gap: 12px; align-items: flex-end;">
             <div>
-                <label class="form-label" style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-2); margin-bottom: 4px; display: block;">
+                <label class="form-label" style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-2); margin-bottom: 6px; display: block;">
                     Cari NIK atau Nama
                 </label>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Ketik NIK 16 digit atau nama..."
-                    class="form-input" style="width: 100%;">
+                    class="form-input" style="width: 100%; height: 38px;">
             </div>
 
             <div>
-                <label class="form-label" style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-2); margin-bottom: 4px; display: block;">
+                <label class="form-label" style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-2); margin-bottom: 6px; display: block;">
                     Filter Kecamatan
                 </label>
-                <select name="kecamatan" class="form-select" style="width: 100%;">
+                <select name="kecamatan" class="form-select" style="width: 100%; height: 38px;">
                     <option value="">-- Semua Kecamatan --</option>
                     @foreach($daftarKecamatan as $kec)
                         <option value="{{ $kec }}" {{ request('kecamatan') == $kec ? 'selected' : '' }}>{{ $kec }}</option>
@@ -36,21 +36,25 @@
             </div>
 
             <div>
-                <label class="form-label" style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-2); margin-bottom: 4px; display: block;">
+                <label class="form-label" style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-2); margin-bottom: 6px; display: block;">
                     Filter Status
                 </label>
-                <select name="status" class="form-select" style="width: 100%;">
+                <select name="status" class="form-select" style="width: 100%; height: 38px;">
                     <option value="">-- Semua Status --</option>
                     <option value="aktif" {{ request('status') === 'aktif' ? 'selected' : '' }}>Aktif</option>
                     <option value="nonaktif" {{ request('status') === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                 </select>
             </div>
 
-            <div style="display: flex; gap: 6px;">
-                <button type="submit" class="btn btn-secondary" style="flex: 1;">Filter</button>
-                @if(request('search') || request('kecamatan') || request('status'))
-                    <a href="{{ route('penamas.penerima.index') }}" class="btn btn-ghost" style="padding: 7px 10px;" title="Reset Filter">✕</a>
-                @endif
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0 16px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 14px; height: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <span>Filter</span>
+                </button>
+                <a href="{{ route('penamas.penerima.index') }}" class="btn btn-secondary" style="height: 38px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;" title="Reset Filter">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 14px; height: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    <span>Reset</span>
+                </a>
             </div>
         </div>
     </form>
@@ -91,16 +95,16 @@
                             {{ $warga->nama }}
                         </td>
                         <td>
-                            <span class="tag tag-blue">{{ $warga->kecamatan }}</span>
+                            <span style="font-weight: 500; color: var(--text-1); font-size: 12.5px;">{{ $warga->kecamatan }}</span>
                         </td>
                         <td style="color: var(--text-2); font-size: 12px; max-width: 260px;">
                             {{ $warga->alamat }}
                         </td>
                         <td style="text-align: center;">
                             @if($warga->status === 'aktif')
-                                <span class="tag tag-green">Aktif</span>
+                                <span class="badge badge-aktif">Aktif</span>
                             @else
-                                <span class="tag tag-gray">Nonaktif</span>
+                                <span class="badge badge-nonaktif">Nonaktif</span>
                             @endif
                         </td>
                         <td style="text-align: center;">
