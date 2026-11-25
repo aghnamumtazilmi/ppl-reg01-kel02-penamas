@@ -373,4 +373,22 @@ class PenerimaController extends Controller
 
         return redirect()->route('penerima.index')->with('success', 'Data alamat dan status penerima berhasil diperbarui!');
     }
+
+    /**
+     * Menghapus data penerima bantuan dari sistem
+     */
+    public function destroy($id)
+    {
+        $penerima = Penerima::findOrFail($id);
+        $nama = $penerima->nama;
+
+        try {
+            $penerima->delete();
+            return redirect()->route('penamas.penerima.index')
+                ->with('success', "Data penerima bantuan {$nama} berhasil dihapus dari sistem.");
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect()->route('penamas.penerima.index')
+                ->with('error', "Gagal menghapus data penerima {$nama} karena data ini sudah memiliki riwayat penyaluran bantuan.");
+        }
+    }
 }
